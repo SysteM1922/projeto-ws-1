@@ -8,8 +8,10 @@ def filter_data(data):
     del data['team']['isPopular']
     del data['position']['positionType']
 
+    new_stats = []
     for key in data['stats']:
-        data['stats'][key] = data['stats'][key]['value']
+        new_stats.append({"label": key, "value": data['stats'][key]["value"]})
+    data['stats'] = new_stats
 
     return data
 
@@ -33,7 +35,6 @@ def get_data():
 def filter_entities():
 
     global players
-    global statistics
     global positions
     global genders
     global nationalities
@@ -45,8 +46,6 @@ def filter_entities():
     nationalities_ids = set()
     teams_ids = set()
     leagues_names = set()
-
-    stats_id = 0
 
     with open(filename, 'r') as file:
         for line in file:
@@ -95,21 +94,11 @@ def filter_entities():
                 teams_ids.add(team["id"])
                 teams.append({"id": team["id"], "label": team["label"], "imageUrl": team["imageUrl"], "league": league_id})
 
-            stats = data.pop("stats")
-            new_stats = []
-            data["stats"] = []
-            for s in stats:
-                stats_id += 1
-                new_stats.append({"id": stats_id, "label": s, "value": stats[s]})
-                data["stats"].append(stats_id)
-            statistics.append(new_stats)
-
             players.append(data)
 
 def to_n3_rdf():
 
     global players
-    global statistics
     global positions
     global genders
     global nationalities
@@ -119,8 +108,6 @@ def to_n3_rdf():
     with open('fifa.n3', 'w', encoding='utf-8') as file:
         string_to_write = '@prefix fifaplg: <http://fifa24/player/guid/> .\n'
         string_to_write += '@prefix fifaplp: <http://fifa24/player/pred/> .\n'
-        string_to_write += '@prefix fifasg: <http://fifa24/stat/guid/> .\n'
-        string_to_write += '@prefix fifapp: <http://fifa24/stat/pred/> .\n'
         string_to_write += '@prefix fifapog: <http://fifa24/position/guid/> .\n'
         string_to_write += '@prefix fifapop: <http://fifa24/position/pred/> .\n'
         string_to_write += '@prefix fifagg: <http://fifa24/gender/guid/> .\n'
@@ -165,7 +152,7 @@ def to_n3_rdf():
 
         for player in players:
             string_to_write = "\n"
-            string_to_write += f'fifaplg:{player["id"]} fifapp:overallRating "{player["overallRating"]}"^^xsd:int;\n'
+            string_to_write += f'fifaplg:{player["id"]} fifaplp:overallRating "{player["overallRating"]}"^^xsd:int;\n'
             string_to_write += f'fifaplp:firstName "{player["firstName"]}"^^xsd:string;\n'
             string_to_write += f'fifaplp:lastName "{player["lastName"]}"^^xsd:string;\n'
             if player["commonName"]:
@@ -184,30 +171,23 @@ def to_n3_rdf():
             string_to_write += f'fifaplp:genders fifagg:{player["gender"]};\n'
             string_to_write += f'fifaplp:nationality fifang:{player["nationality"]};\n'
             string_to_write += f'fifaplp:team fifatg:{player["team"]};\n'
+
             if player["alternatePositions"]:
                 string_to_write += f'fifaplp:alternatePositions '
                 for position in player["alternatePositions"]:
                     string_to_write += f'fifapog:{position},'
                 string_to_write = string_to_write[:-1] + ';\n'
-            string_to_write += f'fifaplp:stats '
+
             for stat in player["stats"]:
-                string_to_write += f'fifasg:{stat},'
-            string_to_write = string_to_write[:-1] + '.\n'
+                string_to_write += f'fifaplp:stat "\\"{stat["label"]}\\":{stat["value"]}"^^xsd:string;\n'
+            string_to_write = string_to_write[:-2] + '.\n'
 
-            file.write(string_to_write)
-
-        for stats in statistics:
-            string_to_write = "\n"
-            for stat in stats:
-                string_to_write += f'fifasg:{stat["id"]} fifapp:label "{stat["label"]}"^^xsd:string;\n'
-                string_to_write += f'fifapp:value "{stat["value"]}"^^xsd:int.\n'
             file.write(string_to_write)
 
 
 filename = 'fifa.json'
 
 players = []
-statistics = []
 positions = []
 genders = []
 nationalities = []
