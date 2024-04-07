@@ -168,4 +168,4 @@ fifa.n3
 node_modules/
 
 # tailwindcss
-static/CACHE/
+CACHE/
