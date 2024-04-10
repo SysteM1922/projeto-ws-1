@@ -168,7 +168,7 @@ def to_n3_rdf():
             string_to_write += f'fifaplp:avatarUrl "{player["avatarUrl"]}"^^xsd:string;\n'
             string_to_write += f'fifaplp:shieldUrl "{player["shieldUrl"]}"^^xsd:string;\n'
             string_to_write += f'fifaplp:position fifapog:{player["position"]};\n'
-            string_to_write += f'fifaplp:genders fifagg:{player["gender"]};\n'
+            string_to_write += f'fifaplp:gender fifagg:{player["gender"]};\n'
             string_to_write += f'fifaplp:nationality fifang:{player["nationality"]};\n'
             string_to_write += f'fifaplp:team fifatg:{player["team"]};\n'
 
