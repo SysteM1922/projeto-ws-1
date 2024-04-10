@@ -152,35 +152,36 @@ def to_n3_rdf():
 
         for player in players:
             string_to_write = "\n"
-            string_to_write += f'fifaplg:{player["id"]} fifaplp:overallRating "{player["overallRating"]}"^^xsd:int;\n'
-            string_to_write += f'fifaplp:firstName "{player["firstName"]}"^^xsd:string;\n'
-            string_to_write += f'fifaplp:lastName "{player["lastName"]}"^^xsd:string;\n'
+            string_to_write += f'fifaplg:{player["id"]} fifaplp:overallRating "{player["overallRating"]}"^^xsd:int;\n' #
+            string_to_write += f'fifaplp:firstName "{player["firstName"]}"^^xsd:string;\n'#
+            string_to_write += f'fifaplp:lastName "{player["lastName"]}"^^xsd:string;\n'#
             if player["commonName"]:
-                string_to_write += f'fifaplp:commonName "{player["commonName"]}"^^xsd:string;\n'
-            string_to_write += f'fifaplp:birthdate "{player["birthdate"]}"^^xsd:date;\n'
-            string_to_write += f'fifaplp:height "{player["height"]}"^^xsd:int;\n'
-            string_to_write += f'fifaplp:skillMoves "{player["skillMoves"]}"^^xsd:int;\n'
+                string_to_write += f'fifaplp:commonName "{player["commonName"]}"^^xsd:string;\n'#
+            string_to_write += f'fifaplp:birthdate "{player["birthdate"]}"^^xsd:date;\n'#
+            string_to_write += f'fifaplp:height "{player["height"]}"^^xsd:int;\n'#
+            string_to_write += f'fifaplp:skillMoves "{player["skillMoves"]}"^^xsd:int;\n'#
             string_to_write += f'fifaplp:weakFootAbility "{player["weakFootAbility"]}"^^xsd:int;\n'
             string_to_write += f'fifaplp:attackingWorkRate "{player["attackingWorkRate"]}"^^xsd:int;\n'
             string_to_write += f'fifaplp:defensiveWorkRate "{player["defensiveWorkRate"]}"^^xsd:int;\n'
-            string_to_write += f'fifaplp:preferredFoot "{player["preferredFoot"]}"^^xsd:int;\n'
+            string_to_write += f'fifaplp:preferredFoot "{player["preferredFoot"]}"^^xsd:int;\n'#
             string_to_write += f'fifaplp:weight "{player["weight"]}"^^xsd:int;\n'
             string_to_write += f'fifaplp:avatarUrl "{player["avatarUrl"]}"^^xsd:string;\n'
             string_to_write += f'fifaplp:shieldUrl "{player["shieldUrl"]}"^^xsd:string;\n'
-            string_to_write += f'fifaplp:position fifapog:{player["position"]};\n'
-            string_to_write += f'fifaplp:genders fifagg:{player["gender"]};\n'
-            string_to_write += f'fifaplp:nationality fifang:{player["nationality"]};\n'
-            string_to_write += f'fifaplp:team fifatg:{player["team"]};\n'
+            string_to_write += f'fifaplp:position fifapog:{player["position"]};\n'#
+            string_to_write += f'fifaplp:genders fifagg:{player["gender"]};\n'#
+            string_to_write += f'fifaplp:nationality fifang:{player["nationality"]};\n'#
+            string_to_write += f'fifaplp:team fifatg:{player["team"]};\n'#
 
             if player["alternatePositions"]:
-                string_to_write += f'fifaplp:alternatePositions '
+                string_to_write += f'fifaplp:altPos '#
                 for position in player["alternatePositions"]:
                     string_to_write += f'fifapog:{position},'
                 string_to_write = string_to_write[:-1] + ';\n'
 
+            string_to_write += f'fifaplp:stat '
             for stat in player["stats"]:
-                string_to_write += f'fifaplp:stat "\\"{stat["label"]}\\":{stat["value"]}";\n'
-            string_to_write = string_to_write[:-2] + '.\n'
+                string_to_write += f'"\\"{stat["label"]}\\":{stat["value"]}",'#
+            string_to_write = string_to_write[:-1] + '.\n'
 
             file.write(string_to_write)
 
