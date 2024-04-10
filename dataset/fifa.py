@@ -121,15 +121,18 @@ def to_n3_rdf():
         string_to_write += '@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n'
         file.write(string_to_write)
 
+        leagues_file = open('leagues.json', 'r', encoding='utf-8')
+        leagues_json = json.load(leagues_file)
+        leagues_file.close()
+
         string_to_write = "\n"
         for league in leagues:
-            string_to_write += f'fifalg:{leagues[league]["id"]} fifalp:label "{league}"^^xsd:string.\n'
+            string_to_write += f'fifalg:{leagues[league]["id"]} fifalp:label "{league}"^^xsd:string;\nfifalp:imageUrl "{leagues_json[league]}"^^xsd:string.\n'
         file.write(string_to_write)
 
         string_to_write = "\n"
         for nationality in nationalities:
-            string_to_write += f'fifang:{nationality["id"]} fifanp:label "{nationality["label"]}"^^xsd:string;\n'
-            string_to_write += f'fifanp:imageUrl "{nationality["imageUrl"]}"^^xsd:string.\n'
+            string_to_write += f'fifang:{nationality["id"]} fifanp:label "{nationality["label"]}"^^xsd:string;\nfifanp:imageUrl "{nationality["imageUrl"]}"^^xsd:string.\n'
         file.write(string_to_write)
 
         string_to_write = "\n"
@@ -139,15 +142,12 @@ def to_n3_rdf():
 
         string_to_write = "\n"
         for position in positions:
-            string_to_write += f'fifapog:{position["id"]} fifapop:label "{position["label"]}"^^xsd:string;\n'
-            string_to_write += f'fifapop:shortLabel "{position["shortLabel"]}"^^xsd:string.\n'
+            string_to_write += f'fifapog:{position["id"]} fifapop:label "{position["label"]}"^^xsd:string;\nfifapop:shortLabel "{position["shortLabel"]}"^^xsd:string.\n'
         file.write(string_to_write)
 
         string_to_write = "\n"
         for team in teams:
-            string_to_write += f'fifatg:{team["id"]} fifatp:label "{team["label"]}"^^xsd:string;\n'
-            string_to_write += f'fifatp:imageUrl "{team["imageUrl"]}"^^xsd:string;\n'
-            string_to_write += f'fifatp:league fifalg:{team["league"]}.\n'
+            string_to_write += f'fifatg:{team["id"]} fifatp:label "{team["label"]}"^^xsd:string;\nfifatp:imageUrl "{team["imageUrl"]}"^^xsd:string;\nfifatp:league fifalg:{team["league"]}.\n'
         file.write(string_to_write)
 
         for player in players:
@@ -173,14 +173,14 @@ def to_n3_rdf():
             string_to_write += f'fifaplp:team fifatg:{player["team"]};\n'
 
             if player["alternatePositions"]:
-                string_to_write += f'fifaplp:altPos '#
+                string_to_write += f'fifaplp:altPos '
                 for position in player["alternatePositions"]:
                     string_to_write += f'fifapog:{position},'
                 string_to_write = string_to_write[:-1] + ';\n'
 
             string_to_write += f'fifaplp:stat '
             for stat in player["stats"]:
-                string_to_write += f'"\\"{stat["label"]}\\":{stat["value"]}",'#
+                string_to_write += f'"\\"{stat["label"]}\\":{stat["value"]}",'
             string_to_write = string_to_write[:-1] + '.\n'
 
             file.write(string_to_write)
