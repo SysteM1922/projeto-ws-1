@@ -179,7 +179,7 @@ def to_n3_rdf():
                 string_to_write = string_to_write[:-1] + ';\n'
 
             for stat in player["stats"]:
-                string_to_write += f'fifaplp:stat "\\"{stat["label"]}\\":{stat["value"]}"^^xsd:string;\n'
+                string_to_write += f'fifaplp:stat "\\"{stat["label"]}\\":{stat["value"]}";\n'
             string_to_write = string_to_write[:-2] + '.\n'
 
             file.write(string_to_write)

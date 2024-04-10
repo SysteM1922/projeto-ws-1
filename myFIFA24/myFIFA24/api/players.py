@@ -1,7 +1,8 @@
 import json
 from utils import query as make_query
 
-def display_players(start: int = 0, limit: int = 1000) -> dict:
+def get_players_by_ovr(start: int = 0, limit: int = 1000, ascending: bool = False) -> list[dict]:
+    order = "ASC" if ascending else "DESC"
     query = f"""
     PREFIX playerPred: <http://fifa24/player/pred/>
     PREFIX nationalityPred: <http://fifa24/nationality/pred/>
@@ -24,7 +25,7 @@ def display_players(start: int = 0, limit: int = 1000) -> dict:
         ?playerid playerPred:stat ?stat .
     }}
     GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr
-    ORDER BY DESC(?ovr) ?name
+    ORDER BY {order}(?ovr) ?name
     OFFSET {start}
     LIMIT {limit}
     """
@@ -35,5 +36,43 @@ def display_players(start: int = 0, limit: int = 1000) -> dict:
         player["stats"] = json.loads(player["stats"])
 
     return result
+
+"""
+def get_players_by_nationality(start: int = 0, limit: int = 1000, ascending: bool = False, nationality: str = None) -> list[dict]:
+    order = "ASC" if ascending else "DESC"
+    pass
+
+def get_players_by_team(start: int = 0, limit: int = 1000, ascending: bool = False, team: str = None) -> list[dict]:
+    order = "ASC" if ascending else "DESC"
+    pass
+
+def get_players_by_league(start: int = 0, limit: int = 1000, ascending: bool = False, league: str = None) -> list[dict]:
+    order = "ASC" if ascending else "DESC"
+    pass
+
+def get_players_by_position(start: int = 0, limit: int = 1000, ascending: bool = False, positions: list[str] = None) -> list[dict]:
+    order = "ASC" if ascending else "DESC"
+    pass
+
+def get_players_by_stat(start: int = 0, limit: int = 1000, ascending: bool = False, stat: str = None) -> list[dict]:
+    order = "ASC" if ascending else "DESC"
+    pass
+
+def get_players_by_name(start: int = 0, limit: int = 1000, name: str = None) -> list[dict]:
+    pass
+
+This funstions should by grouped as filters for the get_players_by_ovr function.    
+"""
+
+def get_player_by_guid(guid: str) -> dict:
+    pass
+
+def get_players_by_team_guid(guid: str) -> list[dict]:
+    pass
+
+def get_players_base_info_by_name(name: str) -> dict:
+    pass
+
+
 
 
