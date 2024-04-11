@@ -1,5 +1,4 @@
-import json
-from .utils import query as make_query
+from .utils import select
 
 def get_leagues() -> list[dict]:
     query = """
@@ -12,7 +11,7 @@ def get_leagues() -> list[dict]:
 	    ?league fifalp:imageUrl ?leagueURL
     }"""
 
-    result = make_query(query)
+    result = select(query)
 
     return result
 
@@ -29,7 +28,7 @@ def get_leagues_by_name(name: str) -> dict:
         ?league fifalp:imageUrl ?leagueURL .
     }}"""
 
-    result = make_query(query)
+    result = select(query)
 
     return result
 
@@ -46,14 +45,6 @@ def get_league_by_guid(guid: str) -> dict:
         ?league fifalp:imageUrl ?leagueURL .
     }}"""
 
-    result = make_query(query)
+    result = select(query)
 
     return result
-
-
-def main():
-    print(get_leagues())
-    
-
-if __name__ == '__main__':
-    main()

@@ -9,16 +9,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content=
         "width=device-width, initial-scale=1.0">
-    <title>Django + Tailwind CSS</title>
- 
-    {% compress css %}
-    <link rel="stylesheet"
-        href="{% static 'src/output.css' %}">
-    {% endcompress %}
- 
+    <title>Django + Bootstrap</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {% block extra_css %}{% endblock %}
+    {% block extra_js %}{% endblock %}
 </head>
  
-<body class="bg-green-50">
+<body class="bg
     <div class="container mx-auto mt-4">
         {% block content %}
         {% endblock content %}

@@ -1,5 +1,5 @@
 import json
-from utils import query as make_query
+from utils import select
 
 def get_squads_by_user_id(user_id: str) -> list[dict]:
     pass
