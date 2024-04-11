@@ -1,6 +1,7 @@
 import json
 from s4api.graphdb_api import GraphDBApi
 from s4api.swagger import ApiClient
+from enum import Enum
 
 endpoint = "http://localhost:7200"
 repo_name = "fifa24"
@@ -13,9 +14,13 @@ def query(query: str) -> dict:
     }
     result = accessor.sparql_select(body=payload, repo_name=repo_name)
 
-    result = json.loads(result)["results"]["bindings"]
-    for res in result:
-        for key in res:
-            res[key] = res[key]["value"]
+    try:
+        result = json.loads(result)["results"]["bindings"]
+        for res in result:
+            for key in res:
+                res[key] = res[key]["value"]
 
-    return result
+        return result
+    
+    except Exception:
+        return []

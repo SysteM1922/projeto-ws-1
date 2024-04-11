@@ -1,34 +1,86 @@
 import json
 from utils import query as make_query
 
-def get_players_by_ovr(start: int = 0, limit: int = 1000, ascending: bool = False) -> list[dict]:
+def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = False, props: dict = None) -> list[dict]:
     order = "ASC" if ascending else "DESC"
+
+    name = ""
+    gender = ""
+    nationality = ""
+    team = ""
+    position = ""
+    extra_position = ""
+
+    if props: 
+        match props["prop"]:
+            case "name":
+                name += f'FILTER REGEX(?name, "{props["value"]}", "i")'
+            case "nationality":
+                nationality += f'FILTER(?nationalityid = <{props["value"]}>)'
+            case "league":
+                team = f'?teamid fifatp:league <{props["value"]}> .'
+            case "team":
+                team = f'FILTER(?teamid = <{props["value"]}>)'
+            case "gender":
+                gender = f'FILTER(?genderid = <{props["value"]}>)'
+            case "position":
+                position = f'FILTER(?positionid = <{props["value"]}>)'
+                extra_position = f"""UNION {{
+                ?playerid fifaplp:gender ?genderid .
+                ?genderid fifagp:label ?gender .
+                ?playerid fifaplp:altPos <{props["value"]}> .
+                ?playerid fifaplp:position ?positionid .
+                ?positionid fifapop:shortLabel ?position .
+                ?playerid fifaplp:nationality ?nationalityid .
+                ?nationalityid fifanp:label ?nationality .
+                ?playerid fifaplp:team ?teamid .
+                ?teamid fifatp:imageUrl ?team .
+                ?playerid fifaplp:overallRating ?ovr .
+                ?playerid fifaplp:firstName ?fName .
+                ?playerid fifaplp:lastName ?lName .
+                OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+                BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+                ?playerid fifaplp:stat ?stat .
+                }}"""  
+
     query = f"""
-    PREFIX playerPred: <http://fifa24/player/pred/>
-    PREFIX nationalityPred: <http://fifa24/nationality/pred/>
-    PREFIX teamPred: <http://fifa24/team/pred/>
-    PREFIX positionPred: <http://fifa24/position/pred/>
-    PREFIX statPred: <http://fifa24/stat/pred/>
-    
-    SELECT ?playerid ?name ?nationality ?team ?position ?ovr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
-    WHERE {{
-        ?playerid playerPred:overallRating ?ovr .
-        ?playerid playerPred:firstName ?fName .
-        ?playerid playerPred:lastName ?lName .
-        OPTIONAL {{ ?playerid playerPred:commonName ?cName . }}
-        BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
-        ?playerid playerPred:nationality ?nationalityid .
-        ?playerid playerPred:team ?teamid .
-        ?teamid teamPred:imageUrl ?team .
-        ?playerid playerPred:position ?positionid .
-        ?positionid positionPred:shortLabel ?position .
-        ?playerid playerPred:stat ?stat .
-    }}
-    GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr
-    ORDER BY {order}(?ovr) ?name
-    OFFSET {start}
-    LIMIT {limit}
-    """
+        PREFIX fifaplp: <http://fifa24/player/pred/>
+        PREFIX fifanp: <http://fifa24/nationality/pred/>
+        PREFIX fifatp: <http://fifa24/team/pred/>
+        PREFIX fifapop: <http://fifa24/position/pred/>
+        PREFIX fifagp: <http://fifa24/gender/pred/>
+
+        SELECT ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?image (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        WHERE {{
+            {{
+            ?playerid fifaplp:gender ?genderid .
+            {gender}
+            ?genderid fifagp:label ?gender .
+            ?playerid fifaplp:position ?positionid .
+            {position}
+            ?positionid fifapop:shortLabel ?position .
+            ?playerid fifaplp:nationality ?nationalityid .
+            {nationality}
+            ?nationalityid fifanp:label ?nationality .
+            ?playerid fifaplp:team ?teamid .
+            {team}
+            ?teamid fifatp:imageUrl ?team .
+            ?playerid fifaplp:overallRating ?ovr .
+            ?playerid fifaplp:firstName ?fName .
+            ?playerid fifaplp:lastName ?lName .
+            OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+            {name}
+            BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+            ?playerid fifaplp:avatarUrl ?image .
+            ?playerid fifaplp:stat ?stat .
+            }}
+            {extra_position}
+        }}
+        GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?image
+        ORDER BY {order}(?ovr) ?name
+        OFFSET {start}
+        LIMIT {limit}
+        """
 
     result = make_query(query)
 
@@ -37,42 +89,98 @@ def get_players_by_ovr(start: int = 0, limit: int = 1000, ascending: bool = Fals
 
     return result
 
-"""
-def get_players_by_nationality(start: int = 0, limit: int = 1000, ascending: bool = False, nationality: str = None) -> list[dict]:
-    order = "ASC" if ascending else "DESC"
-    pass
-
-def get_players_by_team(start: int = 0, limit: int = 1000, ascending: bool = False, team: str = None) -> list[dict]:
-    order = "ASC" if ascending else "DESC"
-    pass
-
-def get_players_by_league(start: int = 0, limit: int = 1000, ascending: bool = False, league: str = None) -> list[dict]:
-    order = "ASC" if ascending else "DESC"
-    pass
-
-def get_players_by_position(start: int = 0, limit: int = 1000, ascending: bool = False, positions: list[str] = None) -> list[dict]:
-    order = "ASC" if ascending else "DESC"
-    pass
-
-def get_players_by_stat(start: int = 0, limit: int = 1000, ascending: bool = False, stat: str = None) -> list[dict]:
-    order = "ASC" if ascending else "DESC"
-    pass
-
-def get_players_by_name(start: int = 0, limit: int = 1000, name: str = None) -> list[dict]:
-    pass
-
-This funstions should by grouped as filters for the get_players_by_ovr function.    
-"""
-
 def get_player_by_guid(guid: str) -> dict:
-    pass
+    query = f"""
+        PREFIX fifaplp: <http://fifa24/player/pred/>
+        PREFIX fifanp: <http://fifa24/nationality/pred/>
+        PREFIX fifatp: <http://fifa24/team/pred/>
+        PREFIX fifapop: <http://fifa24/position/pred/>
+        PREFIX fifagp: <http://fifa24/gender/pred/>
+
+        SELECT ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?card (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        WHERE {{
+            ?playerid fifaplp:gender ?genderid .
+            FILTER(?playerid = <{guid}>)
+            ?genderid fifagp:label ?gender .
+            ?playerid fifaplp:position ?positionid .
+            ?positionid fifapop:shortLabel ?position .
+            ?playerid fifaplp:nationality ?nationalityid .
+            ?nationalityid fifanp:label ?nationality .
+            ?playerid fifaplp:team ?teamid .
+            ?teamid fifatp:imageUrl ?team .
+            ?playerid fifaplp:overallRating ?ovr .
+            ?playerid fifaplp:firstName ?fName .
+            ?playerid fifaplp:lastName ?lName .
+            OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+            BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+            ?playerid fifaplp:shieldUrl ?card .
+            ?playerid fifaplp:stat ?stat .
+        }}
+        GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?card
+        """
+
+    result = make_query(query)
+
+    if not result:
+        return None
+    
+    player = result[0]
+    player["stats"] = json.loads(player["stats"])
+
+    return player
 
 def get_players_by_team_guid(guid: str) -> list[dict]:
-    pass
+    query = f"""
+        PREFIX fifaplp: <http://fifa24/player/pred/>
+        PREFIX fifanp: <http://fifa24/nationality/pred/>
+        PREFIX fifatp: <http://fifa24/team/pred/>
+        PREFIX fifapop: <http://fifa24/position/pred/>
+        PREFIX fifagp: <http://fifa24/gender/pred/>
+
+        SELECT ?playerid ?name ?nationality ?position ?ovr ?gender ?image (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        WHERE {{
+            ?playerid fifaplp:gender ?genderid .
+            ?genderid fifagp:label ?gender .
+            ?playerid fifaplp:position ?positionid .
+            ?positionid fifapop:shortLabel ?position .
+            ?playerid fifaplp:nationality ?nationalityid .
+            ?nationalityid fifanp:label ?nationality .
+            ?playerid fifaplp:team ?teamid .
+            FILTER(?teamid = <{guid}>)
+            ?playerid fifaplp:overallRating ?ovr .
+            ?playerid fifaplp:firstName ?fName .
+            ?playerid fifaplp:lastName ?lName .
+            OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+            BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+            ?playerid fifaplp:avatarUrl ?image .
+            ?playerid fifaplp:stat ?stat .
+        }}
+        GROUP BY ?playerid ?name ?nationality ?position ?ovr ?gender ?image
+        """
+    
+    result = make_query(query)
+
+    for player in result:
+        player["stats"] = json.loads(player["stats"])
+
+    return result
 
 def get_players_base_info_by_name(name: str) -> dict:
-    pass
+    query = f"""
+        PREFIX fifaplp: <http://fifa24/player/pred/>
 
+        SELECT ?playerid ?name ?ovr ?image
+        WHERE {{
+            ?playerid fifaplp:overallRating ?ovr .
+            ?playerid fifaplp:firstName ?fName .
+            ?playerid fifaplp:lastName ?lName .
+            OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+            BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+            FILTER REGEX(?name, "{name}", "i")
+            ?playerid fifaplp:avatarUrl ?image .
+        }}
+        """
+    
+    result = make_query(query)
 
-
-
+    return result
