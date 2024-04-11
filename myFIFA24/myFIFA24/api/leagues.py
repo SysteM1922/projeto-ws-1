@@ -1,6 +1,5 @@
 import json
-from utils import query as make_query
-
+from .utils import query as make_query
 
 def get_leagues() -> list[dict]:
     query = """
@@ -50,3 +49,11 @@ def get_league_by_guid(guid: str) -> dict:
     result = make_query(query)
 
     return result
+
+
+def main():
+    print(get_leagues())
+    
+
+if __name__ == '__main__':
+    main()

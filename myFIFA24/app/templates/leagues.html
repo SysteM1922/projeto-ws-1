@@ -1,0 +1,16 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    <h1 class="text-3xl text-red-800">
+        Leagues
+    </h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for league in leagues %}
+            <div class="bg-red shadow-md rounded-lg p-4">
+                <h2 class="text-xl font-bold text-red-800">{{ league.leagueLabel }}</h2>
+                <img src="{{ league.leagueURL }}" alt="{{ league.leagueLabel }}">
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock content %}
