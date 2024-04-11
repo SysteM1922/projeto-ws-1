@@ -1,5 +1,5 @@
 import json
-from utils import query as make_query
+from utils import select
 
 def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = False, props: dict = None) -> list[dict]:
     order = "ASC" if ascending else "DESC"
@@ -82,7 +82,7 @@ def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = Fals
         LIMIT {limit}
         """
 
-    result = make_query(query)
+    result = select(query)
 
     for player in result:
         player["stats"] = json.loads(player["stats"])
@@ -119,7 +119,7 @@ def get_player_by_guid(guid: str) -> dict:
         GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?card
         """
 
-    result = make_query(query)
+    result = select(query)
 
     if not result:
         return None
@@ -158,7 +158,7 @@ def get_players_by_team_guid(guid: str) -> list[dict]:
         GROUP BY ?playerid ?name ?nationality ?position ?ovr ?gender ?image
         """
     
-    result = make_query(query)
+    result = select(query)
 
     for player in result:
         player["stats"] = json.loads(player["stats"])
@@ -181,6 +181,6 @@ def get_players_base_info_by_name(name: str) -> dict:
         }}
         """
     
-    result = make_query(query)
+    result = select(query)
 
     return result
