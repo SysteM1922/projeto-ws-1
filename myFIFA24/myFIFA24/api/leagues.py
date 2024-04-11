@@ -26,8 +26,8 @@ def get_leagues_by_name(name: str) -> dict:
     SELECT ?league ?leagueLabel ?leagueURL
     WHERE {{
         ?league fifalp:label ?leagueLabel .
-        ?league fifalp:imageUrl ?leagueURL
         FILTER regex(?leagueLabel, "{name}", "i")
+        ?league fifalp:imageUrl ?leagueURL .
     }}"""
 
     result = make_query(query)
@@ -43,18 +43,10 @@ def get_league_by_guid(guid: str) -> dict:
     SELECT  ?league ?leagueLabel ?leagueURL
     WHERE {{
         ?league fifalp:label ?leagueLabel .
-        ?league fifalp:imageUrl ?leagueURL .
         FILTER (?league = <{guid}>)
+        ?league fifalp:imageUrl ?leagueURL .
     }}"""
 
     result = make_query(query)
 
     return result
-
-
-def main():
-    print(get_league_by_guid("http://fifa24/league/guid/1"))
-
-
-if __name__ == "__main__":
-    main()

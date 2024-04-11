@@ -30,11 +30,11 @@ def get_teams_by_name(name: str) -> dict:
     SELECT ?teamId ?teamLabel ?teamURL ?teamLeague ?teamLeagueLabel ?teamLeagueURL  
     WHERE {{
         ?teamId fifatp:label ?teamLabel .
+        FILTER regex(?teamLabel, "{name}", "i")
         ?teamId fifatp:league ?teamLeague .
         ?teamId fifatp:imageUrl ?teamURL .
         ?teamLeague fifalp:label ?teamLeagueLabel .
         ?teamLeague fifalp:imageUrl ?teamLeagueURL
-        FILTER regex(?teamLabel, "{name}", "i")
     }}"""
 
     result = make_query(query)
@@ -51,11 +51,11 @@ def get_team_by_guid(guid: str) -> dict:
     SELECT ?team ?teamLabel ?teamURL ?teamLeague ?teamLeagueLabel ?teamLeagueURL
     WHERE {{
         ?team fifatp:label ?teamLabel .
+        FILTER (?team = <{guid}>)
         ?team fifatp:league ?teamLeague .
         ?team fifatp:imageUrl ?teamURL .
         ?teamLeague fifalp:label ?teamLeagueLabel .
         ?teamLeague fifalp:imageUrl ?teamLeagueURL .
-        FILTER (?team = <{guid}>)
     }}"""
 
     result = make_query(query)
@@ -73,19 +73,12 @@ def get_teams_by_league_guid(guid: str) -> list[dict]:
     WHERE {{
         ?teamId fifatp:label ?teamLabel .
         ?teamId fifatp:league ?teamLeague .
+        FILTER (?teamLeague = <{guid}>)
         ?teamId fifatp:imageUrl ?teamURL .
         ?teamLeague fifalp:label ?teamLeagueLabel .
         ?teamLeague fifalp:imageUrl ?teamLeagueURL
-        FILTER (?teamLeague = <{guid}>)
     }}"""
 
     result = make_query(query)
 
     return result
-
-
-def main():
-    print(get_team_by_guid("http://fifa24/team/guid/1"))
-
-if __name__ == "__main__":
-    main()
