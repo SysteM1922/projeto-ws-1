@@ -35,3 +35,15 @@ def ask(query: str) -> dict:
     
     except Exception:
         return None
+    
+def update(query: str) -> dict:
+    payload = {
+        "update": query
+    }
+    result = accessor.sparql_update(body=payload, repo_name=repo_name)
+
+    try:
+        return json.loads(result)
+    
+    except Exception:
+        return None

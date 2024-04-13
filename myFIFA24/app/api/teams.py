@@ -17,9 +17,7 @@ def get_teams() -> list[dict]:
         ?teamLeague fifalp:imageUrl ?teamLeagueURL
     }"""
 
-    result = select(query)
-
-    return result
+    return select(query)
 
 
 def get_teams_by_name(name: str) -> dict:
@@ -37,9 +35,7 @@ def get_teams_by_name(name: str) -> dict:
         ?teamLeague fifalp:imageUrl ?teamLeagueURL
     }}"""
 
-    result = select(query)
-
-    return result
+    return select(query)
 
 
 def get_team_by_guid(guid: str) -> dict:
@@ -58,9 +54,7 @@ def get_team_by_guid(guid: str) -> dict:
         ?teamLeague fifalp:imageUrl ?teamLeagueURL .
     }}"""
 
-    result = select(query)
-
-    return result
+    return select(query)
 
 
 def get_teams_by_league_guid(guid: str) -> list[dict]:
@@ -79,6 +73,4 @@ def get_teams_by_league_guid(guid: str) -> list[dict]:
         ?teamLeague fifalp:imageUrl ?teamLeagueURL
     }}"""
 
-    result = select(query)
-
-    return result
+    return select(query)

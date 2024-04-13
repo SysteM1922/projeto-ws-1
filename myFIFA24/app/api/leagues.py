@@ -11,9 +11,7 @@ def get_leagues() -> list[dict]:
 	    ?league fifalp:imageUrl ?leagueURL
     }"""
 
-    result = select(query)
-
-    return result
+    return select(query)
 
 
 def get_leagues_by_name(name: str) -> dict:
@@ -28,9 +26,7 @@ def get_leagues_by_name(name: str) -> dict:
         ?league fifalp:imageUrl ?leagueURL .
     }}"""
 
-    result = select(query)
-
-    return result
+    return select(query)
 
 
 def get_league_by_guid(guid: str) -> dict:
@@ -45,6 +41,4 @@ def get_league_by_guid(guid: str) -> dict:
         ?league fifalp:imageUrl ?leagueURL .
     }}"""
 
-    result = select(query)
-
-    return result
+    return select(query)

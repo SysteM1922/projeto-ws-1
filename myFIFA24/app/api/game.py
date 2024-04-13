@@ -1,8 +1,10 @@
 import json
 from utils import select, ask
 from unidecode import unidecode
+import random
 
 def get_random_player() -> dict:
+    
     query = """
     PREFIX fifaplp: <http://fifa24/player/pred/>
     PREFIX fifanp: <http://fifa24/nationality/pred/>
@@ -27,8 +29,9 @@ def get_random_player() -> dict:
         ?playerid fifaplp:stat ?stat .
     }
     GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?image
-
     """
+
+    return random.choice(select(query))
 
 def guess_stat(player_guid: str, stat: str, value: str) -> bool:
     

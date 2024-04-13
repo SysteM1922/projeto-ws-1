@@ -181,6 +181,4 @@ def get_players_base_info_by_name(name: str) -> dict:
         }}
         """
     
-    result = select(query)
-
-    return result
+    return select(query)
