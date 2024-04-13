@@ -23,3 +23,15 @@ def select(query: str) -> dict:
     
     except Exception:
         return []
+    
+def ask(query: str) -> dict:
+    payload = {
+        "query": query
+    }
+    result = accessor.sparql_select(body=payload, repo_name=repo_name)
+
+    try:
+        return json.loads(result)["boolean"]
+    
+    except Exception:
+        return None
