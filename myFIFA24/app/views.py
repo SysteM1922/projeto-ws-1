@@ -77,6 +77,10 @@ def leagues_view(request):
     leagues = leagues_api.get_leagues()
     return render(request, 'leagues.html', {'leagues': leagues})
 
+@login_required(login_url='login')
+def players_view(request):
+    return render(request, 'players.html')
+
 
 
 

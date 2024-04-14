@@ -26,5 +26,6 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path('', views.index, name='index'),
     path('index/', views.index, name='index'),
+    path('players/', views.players_view, name='players'),
     path('leagues/', views.leagues_view, name='leagues'),
 ]

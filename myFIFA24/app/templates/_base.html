@@ -14,7 +14,12 @@
 </head>
 
 <body>
-    <div>
+    <div class="fixed bg-cover h-screen w-screen bg-gray-900">
+        <div class="h-screen w-screen absolute"
+            style="background-image: url('https://th.bing.com/th/id/OIG3.yKQPY9PEENiUAoQZ8YT8?pid=ImgGn'); background-size: cover; background-position: bottom; filter: grayscale(); opacity: 0.1;">
+        </div>
+    </div>
+    <div class="absolute top-0 w-screen h-screen">
         {% block content %}
         {% endblock content %}
     </div>
