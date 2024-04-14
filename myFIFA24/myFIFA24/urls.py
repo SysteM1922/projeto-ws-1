@@ -22,6 +22,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
     path("login/", views.login_view, name="login"),
+    path("signup/", views.signup_view, name="signup"),
+    path("logout/", views.logout_view, name="logout"),
     path('', views.index, name='index'),
+    path('index/', views.index, name='index'),
     path('leagues/', views.leagues_view, name='leagues'),
 ]
