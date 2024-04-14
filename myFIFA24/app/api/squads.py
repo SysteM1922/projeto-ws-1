@@ -121,6 +121,9 @@ def update_squad(guid: str, squad: dict) -> dict:
     DELETE {{
         {delete}
     }}
+    WHERE {{
+        {delete}
+    }}
     INSERT DATA{{
         {insert}
     }}
