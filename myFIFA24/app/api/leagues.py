@@ -5,11 +5,13 @@ def get_leagues() -> list[dict]:
     PREFIX fifalg: <http://fifa24/league/guid/> 
     PREFIX fifalp: <http://fifa24/league/pred/>
 
-    SELECT ?league ?leagueLabel ?leagueURL
+    SELECT ?league ?leagueLabel ?image
     WHERE {
 	    ?league fifalp:label ?leagueLabel .
-	    ?league fifalp:imageUrl ?leagueURL
-    }"""
+	    ?league fifalp:imageUrl ?image .
+    }
+    ORDER BY ?leagueLabel
+    """
 
     return select(query)
 

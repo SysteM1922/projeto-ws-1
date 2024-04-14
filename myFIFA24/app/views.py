@@ -29,7 +29,7 @@ def login_view(request):
             if request.POST.get("remember"):
                 request.session.set_expiry(1209600)
             
-            return redirect('index')
+            return redirect('players')
         else:
             messages.error(request, 'Invalid credentials')
             return redirect('login')
