@@ -42,6 +42,8 @@ def update(query: str) -> dict:
     }
     result = accessor.sparql_update(body=payload, repo_name=repo_name)
 
+    print(result)
+
     try:
         return json.loads(result)
     
