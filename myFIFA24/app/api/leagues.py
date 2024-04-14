@@ -5,12 +5,12 @@ def get_leagues() -> list[dict]:
     PREFIX fifalg: <http://fifa24/league/guid/> 
     PREFIX fifalp: <http://fifa24/league/pred/>
 
-    SELECT ?league ?leagueLabel ?image
+    SELECT ?league ?label ?image
     WHERE {
-	    ?league fifalp:label ?leagueLabel .
+	    ?league fifalp:label ?label .
 	    ?league fifalp:imageUrl ?image .
     }
-    ORDER BY ?leagueLabel
+    ORDER BY ?label
     """
 
     return select(query)
@@ -21,12 +21,14 @@ def get_leagues_by_name(name: str) -> dict:
     PREFIX fifalg: <http://fifa24/league/guid/>
     PREFIX fifalp: <http://fifa24/league/pred/>
 
-    SELECT ?league ?leagueLabel ?leagueURL
+    SELECT ?league ?label ?image
     WHERE {{
-        ?league fifalp:label ?leagueLabel .
-        FILTER regex(?leagueLabel, "{name}", "i")
-        ?league fifalp:imageUrl ?leagueURL .
-    }}"""
+        ?league fifalp:label ?label .
+        FILTER regex(?label, "{name}", "i")
+        ?league fifalp:imageUrl ?image .
+    }}
+    ORDER BY ?label
+    """
 
     return select(query)
 
@@ -36,11 +38,12 @@ def get_league_by_guid(guid: str) -> dict:
     PREFIX fifalg: <http://fifa24/league/guid/>
     PREFIX fifalp: <http://fifa24/league/pred/>
 
-    SELECT  ?league ?leagueLabel ?leagueURL
+    SELECT  ?league ?label ?image
     WHERE {{
-        ?league fifalp:label ?leagueLabel .
+        ?league fifalp:label ?label .
         FILTER (?league = <{guid}>)
-        ?league fifalp:imageUrl ?leagueURL .
-    }}"""
+        ?league fifalp:imageUrl ?image .
+    }}
+    """
 
     return select(query)

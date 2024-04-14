@@ -27,4 +27,5 @@ urlpatterns = [
     path('', views.players_view, name='players'),
     path('players/', views.players_view, name='players'),
     path('leagues/', views.leagues_view, name='leagues'),
+    path('league/<str:guid>/', views.league_view, name='league'),
 ]
