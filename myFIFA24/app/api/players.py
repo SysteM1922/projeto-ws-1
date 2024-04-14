@@ -40,6 +40,10 @@ def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = Fals
                 ?playerid fifaplp:lastName ?lName .
                 OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
                 BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+                ?playerid fifaplp:skillMoves ?skills .
+                ?playerid fifaplp:weakFootAbility ?weakfoot .
+                ?playerid fifaplp:attackingWorkRate ?attwr .
+                ?playerid fifaplp:defensiveWorkRate ?defwr .
                 ?playerid fifaplp:stat ?stat .
                 }}"""  
 
@@ -50,7 +54,7 @@ def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = Fals
         PREFIX fifapop: <http://fifa24/position/pred/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?image (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
             {{
             ?playerid fifaplp:gender ?genderid .
@@ -71,12 +75,16 @@ def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = Fals
             OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
             {name}
             BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+            ?playerid fifaplp:skillMoves ?skills .
+            ?playerid fifaplp:weakFootAbility ?weakfoot .
+            ?playerid fifaplp:attackingWorkRate ?attwr .
+            ?playerid fifaplp:defensiveWorkRate ?defwr .
             ?playerid fifaplp:avatarUrl ?image .
             ?playerid fifaplp:stat ?stat .
             }}
             {extra_position}
         }}
-        GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?image
+        GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr
         ORDER BY {order}(?ovr) ?name
         OFFSET {start}
         LIMIT {limit}

@@ -2,19 +2,19 @@
 
 {% block content %}
 
-    {% include "navbar.html" %}
+{% include "navbar.html" %}
 
-    <div class="flex flex-col items-center justify-center h-full space-y-4">
-        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {% for league in leagues %}
-                <div class="flex flex-col items-center justify-center p-4 space-y-4 bg-gray-800 rounded-lg">
-                    <img src="{{ league.image }}" alt="{{ league.label }}" class="w-24 h-24">
-                    <h2 class="text-xl font-bold text-white">{{ league.label }}</h2>
-                    <a href="#"
-                        class="px-4 py-2 text-sm font-bold text-white bg-green-500 rounded-lg hover:bg-green-600">View</a>
-                </div>
-            {% endfor %}
+<div class="flex flex-col items-center justify-center h-full space-y-4">
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {% for league in leagues %}
+        <div class="flex flex-col items-center justify-center p-4 space-y-4 bg-gray-800 rounded-lg">
+            <img src="{{ league.image }}" alt="{{ league.label }}" class="w-24 h-24">
+            <h2 class="text-xl font-bold text-white">{{ league.label }}</h2>
+            <a href="#"
+                class="px-4 py-2 text-sm font-bold text-white bg-green-500 rounded-lg hover:bg-green-600">View</a>
         </div>
+        {% endfor %}
     </div>
+</div>
 
 {% endblock content %}
