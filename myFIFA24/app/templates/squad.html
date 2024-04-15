@@ -1,0 +1,30 @@
+{% extends "_base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+
+<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <div class="formation-container" style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin: 0 auto; width: 80%;">
+        <!-- Goalkeeper -->
+        <div class="player-rectangle goalkeeper" style="width: 100px; height: 120px; background-color: #f00; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto;">GK</div>
+        <!-- Defenders -->
+        <div class="defenders-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+            <div class="player-rectangle defender" style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">D1</div>
+            <div class="player-rectangle defender" style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">D2</div>
+            <div class="player-rectangle defender" style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">D3</div>
+            <div class="player-rectangle defender" style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">D4</div>
+        </div>
+        <!-- Midfielders -->
+        <div class="midfielders-row" style="display: flex; justify-content: center; width: 100%; gap: 140px;">
+            <div class="player-rectangle midfielder" style="width: 100px; height: 120px; background-color: #00f; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">M1</div>
+            <div class="player-rectangle midfielder" style="width: 100px; height: 120px; background-color: #00f; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">M2</div>
+            <div class="player-rectangle midfielder" style="width: 100px; height: 120px; background-color: #00f; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">M3</div>
+        </div>
+        <!-- Forwards -->
+        <div class="forwards-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+            <div class="player-rectangle forward" style="width: 100px; height: 120px; background-color: #ff0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">F1</div>
+            <div class="player-rectangle forward" style="width: 100px; height: 120px; background-color: #ff0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">F2</div>
+            <div class="player-rectangle forward" style="width: 100px; height: 120px; background-color: #ff0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;">F3</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

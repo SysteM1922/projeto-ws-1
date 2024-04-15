@@ -157,3 +157,8 @@ def players_view(request):
     }
 
     return render(request, 'players.html', {'players': players, 'page_obj': page_obj, "filters": {"nationalities": nationalities, "teams": teams, "genders": genders, "positions": positions}, "form": {"name": request.POST.get('name'), "nationality": request.POST.get('nationality'), "team": request.POST.get('team'), "gender": request.POST.get('gender'), "position": request.POST.get('position'), "order": request.POST.get('order')}})
+
+
+@login_required(login_url='login')
+def squad_view(request):
+    return render(request, 'squad.html')
