@@ -106,7 +106,20 @@ def players_view(request):
     start = (int(page_number) - 1) * players_per_page
 
     ascending = request.GET.get('ascending', 'false') == 'true'
+
+    # Initialize filters dictionary
+    filters = {}
+
+    # Collect filter parameters from the request
+    for key in ['name', 'nationality', 'league', 'team', 'gender', 'position']:
+        value = request.GET.get(key)
+        print("value: ", value)
+        if value:
+            filters[key] = value
+
+    # Fetch the players using your SPARQL query function with filters
     players = players_api.get_players_by_prop(start=start, limit=players_per_page, ascending=ascending)
+
 
     # paginator
     paginator = Paginator(players, players_per_page)
