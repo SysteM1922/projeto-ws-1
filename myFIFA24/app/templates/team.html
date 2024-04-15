@@ -1,0 +1,31 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+{% include "navbar.html" %}
+
+<div class="flex flex-col items-center justify-center space-y-4 max-w-screen-xl mx-auto py-5">
+    <div class="items-center justify-center bg-gray-700 rounded-lg w-full p-2 shadow-lg">
+    </div>
+    <div class="w-full">
+        {% for player in players %}
+        <div class="flex bg-gray-800 bg-opacity-60 p-2 border-gray-900 text-white" style="border-width: 1px;">
+            <a class="flex hover:cursor-pointer" href="#">
+                <img src="{{ player.image }}" class="mx-2">
+                {{ player.name }}
+            </a>
+            <div>
+                <img src ="{{ player.nationality }}">
+            </div>
+            <div class="font-bold">
+                {{ player.ovr }}
+            </div>
+            <div>
+                {{ player.position }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}

@@ -141,34 +141,39 @@ def get_players_by_team_guid(guid: str) -> list[dict]:
     query = f"""
         PREFIX fifaplp: <http://fifa24/player/pred/>
         PREFIX fifanp: <http://fifa24/nationality/pred/>
+        PREFIX fifatg: <http://fifa24/team/guid/>
         PREFIX fifatp: <http://fifa24/team/pred/>
         PREFIX fifapop: <http://fifa24/position/pred/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?nationality ?position ?ovr ?gender ?image (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
-            ?playerid fifaplp:gender ?genderid .
-            ?genderid fifagp:label ?gender .
             ?playerid fifaplp:position ?positionid .
             ?positionid fifapop:shortLabel ?position .
             ?playerid fifaplp:nationality ?nationalityid .
-            ?nationalityid fifanp:label ?nationality .
+            ?nationalityid fifanp:imageUrl ?nationality .
             ?playerid fifaplp:team ?teamid .
-            FILTER(?teamid = <{guid}>)
+            FILTER(?teamid = fifatg:{guid})
             ?playerid fifaplp:overallRating ?ovr .
             ?playerid fifaplp:firstName ?fName .
             ?playerid fifaplp:lastName ?lName .
             OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
             BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+            ?playerid fifaplp:skillMoves ?skills .
+            ?playerid fifaplp:weakFootAbility ?weakfoot .
+            ?playerid fifaplp:attackingWorkRate ?attwr .
+            ?playerid fifaplp:defensiveWorkRate ?defwr .
             ?playerid fifaplp:avatarUrl ?image .
             ?playerid fifaplp:stat ?stat .
         }}
-        GROUP BY ?playerid ?name ?nationality ?position ?ovr ?gender ?image
+        GROUP BY ?playerid ?name ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr
+        ORDER BY DESC(?ovr) ?name
         """
     
     result = select(query)
 
     for player in result:
+        player["id"] = player["playerid"].split("/")[-1]
         player["stats"] = json.loads(player["stats"])
 
     return result

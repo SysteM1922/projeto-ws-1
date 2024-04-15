@@ -73,4 +73,9 @@ def get_teams_by_league_guid(guid: str) -> list[dict]:
     ORDER BY ?label
     """
 
-    return select(query)
+    result = select(query)
+
+    for team in result:
+        team["id"] = team["team"].split("/")[-1]
+
+    return result
