@@ -145,7 +145,9 @@ def players_view(request):
     return render(request, 'players.html', {'players': page_obj.object_list, 'page_obj': page_obj}) '''
 
 
-
+@login_required(login_url='login')
+def squad_view(request):
+    return render(request, 'squad.html')
 
 
 
