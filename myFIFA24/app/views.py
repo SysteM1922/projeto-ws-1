@@ -161,5 +161,4 @@ def players_view(request):
 
 @login_required(login_url='login')
 def squad_view(request):
-    players = players_api.get_players()
-    return render(request, 'squad.html', {"players": players})
+    return render(request, 'squad.html')
