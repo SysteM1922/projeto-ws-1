@@ -7,34 +7,42 @@ def get_teams() -> list[dict]:
     PREFIX fifalp: <http://fifa24/league/pred/>
 
 
-    SELECT ?teamId ?teamLabel ?teamURL ?teamLeague ?teamLeagueLabel ?teamLeagueURL
+    SELECT ?teamId ?teamLabel ?teamImage ?leagueId ?leagueLabel ?leagueImage
     WHERE {
     	?teamId fifatp:label ?teamLabel .
-        ?teamId fifatp:league ?teamLeague .
-        ?teamId fifatp:imageUrl ?teamURL .
-        ?teamLeague fifalp:label ?teamLeagueLabel .
-        ?teamLeague fifalp:imageUrl ?teamLeagueURL
-    }"""
+        ?teamId fifatp:league ?leagueId .
+        ?teamId fifatp:imageUrl ?teamImage .
+        ?leagueId fifalp:label ?leagueLabel .
+        ?leagueId fifalp:imageUrl ?leagueImage .
+    }
+    ORDER BY ?leagueLabel ?teamLabel
+    """
 
-    return select(query)
+    result = select(query)
 
+    ret = []
+    leagues = {}
 
-def get_teams_by_name(name: str) -> dict:
-    query = f"""
-    PREFIX fifatp: <http://fifa24/team/pred/>
-    PREFIX fifalp: <http://fifa24/league/pred/>
+    for team in result:
+        league_id = team["leagueId"]
+        if league_id not in leagues:
+            leagues[league_id] = {
+                "id": league_id,
+                "label": team["leagueLabel"],
+                "image": team["leagueImage"],
+                "teams": []
+            }
 
-    SELECT ?teamId ?teamLabel ?teamURL ?teamLeague ?teamLeagueLabel ?teamLeagueURL  
-    WHERE {{
-        ?teamId fifatp:label ?teamLabel .
-        FILTER regex(?teamLabel, "{name}", "i")
-        ?teamId fifatp:league ?teamLeague .
-        ?teamId fifatp:imageUrl ?teamURL .
-        ?teamLeague fifalp:label ?teamLeagueLabel .
-        ?teamLeague fifalp:imageUrl ?teamLeagueURL
-    }}"""
+        leagues[league_id]["teams"].append({
+            "id": team["teamId"],
+            "label": team["teamLabel"],
+            "image": team["teamImage"]
+        })
 
-    return select(query)
+    for league in leagues.values():
+        ret.append(league)
+
+    return ret
 
 
 def get_team_by_guid(guid: str) -> dict:
