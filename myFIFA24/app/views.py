@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .api import leagues as leagues_api
 from .api import teams as teams_api
+from .api import players as players_api 
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib import messages
@@ -90,6 +91,11 @@ def leagues_view(request):
 def league_view(request, guid):
     teams = teams_api.get_teams_by_league_guid(guid)
     return render(request, 'league.html', {'teams': teams})
+
+@login_required(login_url='login')
+def team_view(request, guid):
+    players = players_api.get_players_by_team_guid(guid)
+    return render(request, 'team.html', {"players": players})
 
 @login_required(login_url='login')
 def players_view(request):
