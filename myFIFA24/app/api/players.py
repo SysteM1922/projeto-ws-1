@@ -394,7 +394,7 @@ def get_players_base_info_by_name(name: str) -> dict:
     query = f"""
         PREFIX fifaplp: <http://fifa24/player/pred/>
 
-        SELECT ?playerid ?name ?ovr ?image
+        SELECT ?playerid ?name ?ovr ?image ?shield
         WHERE {{
             ?playerid fifaplp:overallRating ?ovr .
             ?playerid fifaplp:firstName ?fName .
@@ -403,6 +403,7 @@ def get_players_base_info_by_name(name: str) -> dict:
             BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
             FILTER REGEX(?name, "{name}", "i")
             ?playerid fifaplp:avatarUrl ?image .
+            ?playerid fifaplp:shieldUrl ?shield .
         }}
         """
     
