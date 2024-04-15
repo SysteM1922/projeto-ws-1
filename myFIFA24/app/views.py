@@ -8,6 +8,10 @@ from django.contrib.auth.models import User
 from .models import Profile
 # Create your views here.
 
+from .api import players as players_api
+from django.core.paginator import Paginator
+
+
 @login_required(login_url='login')
 def index(request):
 
@@ -93,11 +97,33 @@ def league_view(request, guid):
 
 @login_required(login_url='login')
 def players_view(request):
-    return render(request, 'players.html')
+    players_per_page = 20
 
+    page_number = request.GET.get('page', 1)
 
+    # Fetch the players using your SPARQL query function
+    # Adjust the start and limit parameters based on the current page
+    start = (int(page_number) - 1) * players_per_page
 
+    ascending = request.GET.get('ascending', 'false') == 'true'
+    players = players_api.get_players_by_prop(start=start, limit=players_per_page, ascending=ascending)
 
+    # paginator
+    paginator = Paginator(players, players_per_page)
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'players.html', {'players': players, 'page_obj': page_obj})
+
+    ''' # Temporary static list for testing
+    players = [{'name': 'Player 1'}, {'name': 'Player 2'}, ...] * 100
+
+    # Create a Paginator instance with the static list
+    paginator = Paginator(players, players_per_page)
+
+    # Get the Page object for the current page
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'players.html', {'players': page_obj.object_list, 'page_obj': page_obj}) '''
 
 
 

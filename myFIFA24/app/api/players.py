@@ -1,5 +1,5 @@
 import json
-from utils import select
+from .utils import select
 
 def get_players_by_prop(start: int = 0, limit: int = 100, ascending: bool = False, props: dict = None) -> list[dict]:
     order = "ASC" if ascending else "DESC"

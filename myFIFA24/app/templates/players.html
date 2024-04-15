@@ -1,8 +1,84 @@
-{% extends "_base.html" %}
+{% extends "_base.html" %} {% block content %} {% include "navbar.html" %}
 
-{% block content %}
+<div class="container mx-auto px-4">
+  <table class="table-auto w-full text-white bg-gray-800 opacity-80">
+    <thead>
+      <tr>
+        <th class="px-4 py-2"></th>
+        <th class="px-4 py-2">Name</th>
+        <th class="px-4 py-2">Club</th>
+        <th class="px-4 py-2">Nationality</th>
+        <th class="px-4 py-2">
+          <a href="?ascending={% if request.GET.ascending == 'true' %}false{% else %}true{% endif %}">
+             OVR
+          </a>
+         </th>
+        <th class="px-4 py-2">Position</th>
+        <th class="px-4 py-2">Gender</th>
+        <th class="px-4 py-2">Skill Moves</th>
+        <th class="px-4 py-2">Week Foot Ability</th>
+        <th class="px-4 py-2">Work Rate</th>
+        <th class="px-4 py-2">PAC</th>
+        <th class="px-4 py-2">SHO</th>
+        <th class="px-4 py-2">PAS</th>
+        <th class="px-4 py-2">DRI</th>
+        <th class="px-4 py-2">DEF</th>
+        <th class="px-4 py-2">PHY</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for player in players %}
+      <tr
+        class="{{ forloop.counter|divisibleby:'2'|yesno:'bg-gray-700,bg-gray-800' }}"
+      >
+        <td class="border px-4 py-2">
+          <img
+            src="{{ player.image }}"
+            alt="{{ player.name }}"
+            class="w-12 h-12 object-cover"
+          />
+        </td>
+        <td class="border px-4 py-2">{{ player.name }}</td>
+        <td class="border px-4 py-2">
+          <img src="{{ player.team }}" class="w-12 h-12 object-cover" />
+        </td>
+        <td class="border px-4 py-2">{{ player.nationality }}</td>
+        <td class="border px-4 py-2">{{ player.ovr }}</td>
+        <td class="border px-4 py-2">{{ player.position }}</td>
+        <td class="border px-4 py-2">{{ player.gender|slice:":1" }}</td>
+        <td class="border px-4 py-2">{{ player.skills }}</td>
+        <td class="border px-4 py-2">{{ player.weakfoot }}</td>
+        <td class="border px-4 py-2">{{ player.attwr }}</td>
+        <td class="border px-4 py-2">{{ player.stat}}</td>
+        <td class="border px-4 py-2">{{ player.stat.sho }}</td>
+        <td class="border px-4 py-2">{{ player.stat.pas }}</td>
+        <td class="border px-4 py-2">{{ player.stat.dri }}</td>
+        <td class="border px-4 py-2">{{ player.stat.def }}</td>
+        <td class="border px-4 py-2">{{ player.stat.phy }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
 
-{% include "navbar.html" %}
-
-
+<!-- Pagination controls -->
+<div class="container mx-auto mt-8">
+  <div class="pagination text-right">
+     <span class="step-links">
+       {% if page_obj.has_previous %}
+       <a href="?page=1" class="text-white hover:text-gray-300">&laquo; first</a>
+       <a href="?page={{ page_obj.previous_page_number }}" class="text-white hover:text-gray-300">previous</a>
+       {% endif %}
+ 
+       <span class="current text-white">
+         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+       </span>
+ 
+       {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}" class="text-white hover:text-gray-300">next</a>
+       <a href="?page={{ page_obj.paginator.num_pages }}" class="text-white hover:text-gray-300">last &raquo;</a>
+       {% endif %}
+     </span>
+  </div>
+ </div>
 {% endblock %}
