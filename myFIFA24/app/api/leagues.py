@@ -12,8 +12,13 @@ def get_leagues() -> list[dict]:
     }
     ORDER BY ?label
     """
+    
+    result = select(query)
 
-    return select(query)
+    for league in result:
+        league['id'] = league['league'].split('/')[-1]
+
+    return result
 
 
 def get_leagues_by_name(name: str) -> dict:
@@ -30,20 +35,9 @@ def get_leagues_by_name(name: str) -> dict:
     ORDER BY ?label
     """
 
-    return select(query)
+    result = select(query)
 
+    for league in result:
+        league['id'] = league['league'].split('/')[-1]
 
-def get_league_by_guid(guid: str) -> dict:
-    query = f"""
-    PREFIX fifalg: <http://fifa24/league/guid/>
-    PREFIX fifalp: <http://fifa24/league/pred/>
-
-    SELECT  ?league ?label ?image
-    WHERE {{
-        ?league fifalp:label ?label .
-        FILTER (?league = <{guid}>)
-        ?league fifalp:imageUrl ?image .
-    }}
-    """
-
-    return select(query)
+    return result

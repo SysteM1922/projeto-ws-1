@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .api import leagues as leagues_api
+from .api import teams as teams_api
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib import messages
@@ -73,13 +74,22 @@ def signup_view(request):
 
     return render(request, 'signup.html')
 
+@login_required(login_url='login')
 def leagues_view(request):
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        if name:
+            leagues = leagues_api.get_leagues_by_name(name)
+            return render(request, 'leagues.html', {'leagues': leagues, 'name': name})
+
     leagues = leagues_api.get_leagues()
     return render(request, 'leagues.html', {'leagues': leagues})
 
+@login_required(login_url='login')
 def league_view(request, guid):
-    league = leagues_api.get_league_by_guid(guid)
-    return render(request, 'league.html', {'league': league})
+    teams = teams_api.get_teams_by_league_guid(guid)
+    return render(request, 'league.html', {'teams': teams})
 
 @login_required(login_url='login')
 def players_view(request):

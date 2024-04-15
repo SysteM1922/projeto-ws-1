@@ -1,6 +1,5 @@
 import json
-from utils import select
-
+from .utils import select
 
 def get_teams() -> list[dict]:
     query = """
@@ -61,16 +60,17 @@ def get_teams_by_league_guid(guid: str) -> list[dict]:
     query = f"""
     PREFIX fifatg: <http://fifa24/team/guid/>
     PREFIX fifatp: <http://fifa24/team/pred/>
+    PREFIX fifalg: <http://fifa24/league/guid/>
     PREFIX fifalp: <http://fifa24/league/pred/>
 
-    SELECT ?teamId ?teamLabel ?teamURL ?teamLeague ?teamLeagueLabel ?teamLeagueURL
+    SELECT ?team ?label ?image
     WHERE {{
-        ?teamId fifatp:label ?teamLabel .
-        ?teamId fifatp:league ?teamLeague .
-        FILTER (?teamLeague = <{guid}>)
-        ?teamId fifatp:imageUrl ?teamURL .
-        ?teamLeague fifalp:label ?teamLeagueLabel .
-        ?teamLeague fifalp:imageUrl ?teamLeagueURL
-    }}"""
+        ?team fifatp:label ?label .
+        ?team fifatp:league ?league .
+        FILTER (?league = fifalg:{guid})
+        ?team fifatp:imageUrl ?image .
+    }}
+    ORDER BY ?label
+    """
 
     return select(query)
