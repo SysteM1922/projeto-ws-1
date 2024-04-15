@@ -9,10 +9,6 @@ from django.contrib.auth.models import User
 from .models import Profile
 # Create your views here.
 
-from .api import players as players_api
-from django.core.paginator import Paginator
-
-
 @login_required(login_url='login')
 def index(request):
 
@@ -103,15 +99,21 @@ def team_view(request, guid):
 
 @login_required(login_url='login')
 def players_view(request):
-    players_per_page = 20
 
-    page_number = request.GET.get('page', 1)
+    players_per_page = 30
+
+    page_number = int(request.GET.get('page', 1))
 
     # Fetch the players using your SPARQL query function
     # Adjust the start and limit parameters based on the current page
-    start = (int(page_number) - 1) * players_per_page
+    start = (page_number - 1) * players_per_page
 
     ascending = request.GET.get('ascending', 'false') == 'true'
+
+    nationalities = players_api.get_nationalities()
+    teams = teams_api.get_teams()
+    genders = players_api.get_genders()
+    positions = players_api.get_positions()
 
     # Initialize filters dictionary
     filters = {}
@@ -119,30 +121,27 @@ def players_view(request):
     # Collect filter parameters from the request
     for key in ['name', 'nationality', 'league', 'team', 'gender', 'position']:
         value = request.GET.get(key)
-        print("value: ", value)
         if value:
             filters[key] = value
 
     # Fetch the players using your SPARQL query function with filters
     players = players_api.get_players_by_prop(start=start, limit=players_per_page, ascending=ascending)
 
+    total_players = players_api.get_total_players()
 
-    # paginator
-    paginator = Paginator(players, players_per_page)
-    page_obj = paginator.get_page(page_number)
+    page_obj = {
+        "has_previous": page_number > 1,
+        "previous_page_number": page_number - 1,
+        "number": page_number,
+        "num_pages": total_players // players_per_page + 1 if total_players % players_per_page else total_players // players_per_page,
+        "has_next": total_players > start + players_per_page,
+        "next_page_number": page_number + 1,
+    }
 
-    return render(request, 'players.html', {'players': players, 'page_obj': page_obj})
+    for league in teams:
+        print(league["label"], league["id"])
 
-    ''' # Temporary static list for testing
-    players = [{'name': 'Player 1'}, {'name': 'Player 2'}, ...] * 100
-
-    # Create a Paginator instance with the static list
-    paginator = Paginator(players, players_per_page)
-
-    # Get the Page object for the current page
-    page_obj = paginator.get_page(page_number)
-
-    return render(request, 'players.html', {'players': page_obj.object_list, 'page_obj': page_obj}) '''
+    return render(request, 'players.html', {'players': players, 'page_obj': page_obj, "filters": {"nationalities": nationalities, "teams:": teams, "genders": genders, "positions": positions}})
 
 
 @login_required(login_url='login')
