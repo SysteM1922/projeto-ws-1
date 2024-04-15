@@ -1,44 +1,22 @@
-import json
 from .utils import select
 
 def get_teams() -> list[dict]:
     query = """
     PREFIX fifatp: <http://fifa24/team/pred/>
-    PREFIX fifalp: <http://fifa24/league/pred/>
 
-
-    SELECT ?teamId ?teamLabel ?leagueId ?leagueLabel
+    SELECT ?teamId ?label
     WHERE {
-    	?teamId fifatp:label ?teamLabel .
-        ?teamId fifatp:league ?leagueId .
-        ?leagueId fifalp:label ?leagueLabel .
+    	?teamId fifatp:label ?label .
     }
-    ORDER BY ?leagueLabel ?teamLabel
+    ORDER BY ?label
     """
 
     result = select(query)
 
-    ret = []
-    leagues = {}
-
     for team in result:
-        league_id = team["leagueId"]
-        if league_id not in leagues:
-            leagues[league_id] = {
-                "id": league_id.split("/")[-1],
-                "label": team["leagueLabel"],
-                "teams": []
-            }
+        team["id"] = team["teamId"].split("/")[-1]
 
-        leagues[league_id]["teams"].append({
-            "id": team["teamId"].split("/")[-1],
-            "label": team["teamLabel"],
-        })
-
-    for league in leagues.values():
-        ret.append(league)
-
-    return ret
+    return result
 
 
 def get_team_by_guid(guid: str) -> dict:

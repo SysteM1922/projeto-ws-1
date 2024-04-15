@@ -19,7 +19,7 @@ def get_nationalities() -> list[dict]:
         result = cache[query]["result"]
 
         for query in list(cache):
-            if time.time() - cache[query]["time"] > 60:
+            if time.time() - cache[query]["time"] > 300:
                 del cache[query]
 
         return result
@@ -48,7 +48,7 @@ def get_genders() -> list[dict]:
         result = cache[query]["result"]
 
         for query in list(cache):
-            if time.time() - cache[query]["time"] > 60:
+            if time.time() - cache[query]["time"] > 300:
                 del cache[query]
 
         return result
@@ -77,7 +77,7 @@ def get_positions() -> list[dict]:
         result = cache[query]["result"]
 
         for query in cache:
-            if time.time() - cache[query]["time"] > 60:
+            if time.time() - cache[query]["time"] > 300:
                 del cache[query]
 
         return result
@@ -106,37 +106,11 @@ def get_positions() -> list[dict]:
             if pos["label"] == position["label"]:
                 position["id"] = pos["positionid"].split("/")[-1]
 
-    cache[query] = {"time": time.time(), "result": result}
+    cache[query] = {"time": time.time(), "result": ret}
 
     return ret
 
-def get_total_players() -> int:
-    query = """
-        PREFIX fifaplp: <http://fifa24/player/pred/>
-
-        SELECT (COUNT(?playerid) AS ?total)
-        WHERE {
-            ?playerid fifaplp:overallRating ?ovr .
-        }
-        """
-    
-    result = select(query)
-
-    return int(result[0]["total"])
-
-def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None, props: dict = None) -> list[dict]:
-    if ascending is None:
-        order = "DESC(?ovr) ?name"
-    else:
-        if props:
-            if props["prop"] == "ovr":
-                order = f'{"ASC" if ascending else "DESC"}(?ovr) ?name'
-            elif props["prop"] == "name":
-                order = f'{"ASC" if ascending else "DESC"}(?name) DESC(?ovr)'
-            else:
-                order = f'{"ASC" if ascending else "DESC"}(?{props["prop"]}) DESC(?ovr) ?name'
-        else:
-            order = f'{"ASC" if ascending else "DESC"}(?ovr) ?name'
+def get_total_players(props: dict = None) -> int:
 
     name = ""
     gender = ""
@@ -144,52 +118,131 @@ def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None,
     team = ""
     position = ""
     extra_position = ""
-
+    
     if props: 
-        match props["prop"]:
-            case "name":
-                name += f'FILTER REGEX(?name, "{props["value"]}", "i")'
-            case "nationality":
-                nationality += f'FILTER(?nationalityid = <{props["value"]}>)'
-            case "league":
-                team = f'?teamid fifatp:league <{props["value"]}> .'
-            case "team":
-                team = f'FILTER(?teamid = <{props["value"]}>)'
-            case "gender":
-                gender = f'FILTER(?genderid = <{props["value"]}>)'
-            case "position":
-                position = f'FILTER(?positionid = <{props["value"]}>)'
-                extra_position = f"""UNION {{
-                ?playerid fifaplp:gender ?genderid .
-                ?genderid fifagp:label ?gender .
-                ?playerid fifaplp:altPos <{props["value"]}> .
-                ?playerid fifaplp:position ?positionid .
-                ?positionid fifapop:shortLabel ?position .
-                ?playerid fifaplp:nationality ?nationalityid .
-                ?nationalityid fifanp:imageUrl ?flag .
-                ?nationalityid fifanp:label ?nationality .
-                ?playerid fifaplp:team ?teamid .
-                ?teamid fifatp:imageUrl ?team .
-                ?playerid fifaplp:overallRating ?ovr .
-                ?playerid fifaplp:firstName ?fName .
-                ?playerid fifaplp:lastName ?lName .
-                OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
-                BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
-                ?playerid fifaplp:skillMoves ?skills .
-                ?playerid fifaplp:weakFootAbility ?weakfoot .
-                ?playerid fifaplp:attackingWorkRate ?attwr .
-                ?playerid fifaplp:defensiveWorkRate ?defwr .
-                ?playerid fifaplp:stat ?stat .
-                }}"""  
+        for prop in props:
+            match prop["prop"]:
+                case "name":
+                    name += f'FILTER REGEX(?name, "{prop["value"]}", "i")'
+                case "nationality":
+                    nationality += f'FILTER(?nationalityid = fifang:{prop["value"]})'
+                case "league":
+                    team = f'?teamid fifatp:league fifalg:{prop["value"]} .'
+                case "team":
+                    team = f'FILTER(?teamid = fifatg:{prop["value"]})'
+                case "gender":
+                    gender = f'FILTER(?genderid = fifagg:{prop["value"]})'
+                case "position":
+                    position = f'FILTER(?positionid = fifapog:{prop["value"]})'
+                    extra_position = f"""UNION {{
+                    ?playerid fifaplp:altPos fifapog:{prop["value"]} .
+                    ?playerid fifaplp:firstName ?fName .
+                    ?playerid fifaplp:lastName ?lName .
+                    OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+                    }}"""  
 
     query = f"""
         PREFIX fifaplp: <http://fifa24/player/pred/>
+        PREFIX fifang: <http://fifa24/nationality/guid/>
+        PREFIX fifalg: <http://fifa24/league/guid/>
+        PREFIX fifatg: <http://fifa24/team/guid/>
+        PREFIX fifapog: <http://fifa24/position/guid/>
+        PREFIX fifagg: <http://fifa24/gender/guid/>
+
+        SELECT (COUNT(?playerid) AS ?total)
+        WHERE {{
+            {{
+            ?playerid fifaplp:gender ?genderid .
+            {gender}
+            ?playerid fifaplp:position ?positionid .
+            {position}
+            ?playerid fifaplp:nationality ?nationalityid .
+            {nationality}
+            ?playerid fifaplp:team ?teamid .
+            {team}
+            ?playerid fifaplp:firstName ?fName .
+            ?playerid fifaplp:lastName ?lName .
+            OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+            {name}
+            }}
+            {extra_position}
+        }}
+        """
+    
+    result = select(query)
+
+    return int(result[0]["total"])
+
+def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> list[dict]:
+
+    order = "DESC(?ovr) ?name"
+    name = ""
+    gender = ""
+    nationality = ""
+    team = ""
+    position = ""
+    extra_position = ""
+
+    if props:
+        for prop in props:
+            match prop["prop"]:
+                case "name":
+                    name += f'FILTER REGEX(?name, "{prop["value"]}", "i")'
+                case "nationality":
+                    nationality += f'FILTER(?nationalityid = fifang:{prop["value"]})'
+                case "league":
+                    team = f'?teamid fifatp:league fifalg:{prop["value"]} .'
+                case "team":
+                    team = f'FILTER(?teamid = fifatg:{prop["value"]})'
+                case "gender":
+                    gender = f'FILTER(?genderid = fifagg:{prop["value"]})'
+                case "position":
+                    position = f'FILTER(?positionid = fifapog:{prop["value"]})'
+                    extra_position = f"""UNION {{
+                    ?playerid fifaplp:gender ?genderid .
+                    ?genderid fifagp:label ?gender .
+                    ?playerid fifaplp:altPos fifapog:{prop["value"]} .
+                    ?playerid fifaplp:position ?positionid .
+                    ?positionid fifapop:shortLabel ?position .
+                    ?playerid fifaplp:nationality ?nationalityid .
+                    ?nationalityid fifanp:imageUrl ?flag .
+                    ?nationalityid fifanp:label ?nationality .
+                    ?playerid fifaplp:team ?teamid .
+                    ?teamid fifatp:imageUrl ?team .
+                    ?playerid fifaplp:overallRating ?ovr .
+                    ?playerid fifaplp:firstName ?fName .
+                    ?playerid fifaplp:lastName ?lName .
+                    OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
+                    BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
+                    ?playerid fifaplp:skillMoves ?skills .
+                    ?playerid fifaplp:weakFootAbility ?weakfoot .
+                    ?playerid fifaplp:attackingWorkRate ?attwr .
+                    ?playerid fifaplp:defensiveWorkRate ?defwr .
+                    ?playerid fifaplp:stat ?stat .
+                    }}"""
+                case "order":
+                    signal = "ASC" if prop["value"][0] == "-" else "DESC"
+                    ord = prop["value"][1:]
+                    if ord == "ovr":
+                        order = f"{signal}(?ovr) ?name"
+                    elif ord == "name":
+                        order = f"{signal}(?name) DESC(?ovr)"
+                    else:
+                        order = f"{signal}(?{ord}) DESC(?ovr) ?name"
+
+    query = f"""
+        PREFIX fifaplp: <http://fifa24/player/pred/>
+        PREFIX fifang: <http://fifa24/nationality/guid/>
         PREFIX fifanp: <http://fifa24/nationality/pred/>
+        PREFIX fifalg: <http://fifa24/league/guid/>
+        PREFIX fifatg: <http://fifa24/team/guid/>
         PREFIX fifatp: <http://fifa24/team/pred/>
+        PREFIX fifapog: <http://fifa24/position/guid/>
         PREFIX fifapop: <http://fifa24/position/pred/>
+        PREFIX fifagg: <http://fifa24/gender/guid/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?flag ?team ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?flag ?nationality ?team ?logo ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
             {{
             ?playerid fifaplp:gender ?genderid .
@@ -204,7 +257,8 @@ def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None,
             ?nationalityid fifanp:label ?nationality .
             ?playerid fifaplp:team ?teamid .
             {team}
-            ?teamid fifatp:imageUrl ?team .
+            ?teamid fifatp:label ?team .
+            ?teamid fifatp:imageUrl ?logo .
             ?playerid fifaplp:overallRating ?ovr .
             ?playerid fifaplp:firstName ?fName .
             ?playerid fifaplp:lastName ?lName .
@@ -220,7 +274,7 @@ def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None,
             }}
             {extra_position}
         }}
-        GROUP BY ?playerid ?name ?flag ?team ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr
+        GROUP BY ?playerid ?name ?flag ?nationality ?team ?logo ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr
         ORDER BY {order}
         OFFSET {start}
         LIMIT {limit}
@@ -230,7 +284,7 @@ def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None,
 
         result = cache[query]["result"]
         for query in cache:
-            if time.time() - cache[query]["time"] > 60:
+            if time.time() - cache[query]["time"] > 300:
                 del cache[query]
         
         return result
@@ -321,7 +375,7 @@ def get_players_by_team_guid(guid: str) -> list[dict]:
         result = cache[query]["result"]
 
         for query in list(cache):
-            if time.time() - cache[query]["time"] > 60:
+            if time.time() - cache[query]["time"] > 300:
                 del cache[query]
 
         return result

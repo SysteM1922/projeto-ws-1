@@ -102,32 +102,50 @@ def players_view(request):
 
     players_per_page = 30
 
-    page_number = int(request.GET.get('page', 1))
+    page_number = int(request.POST.get('page', 1))
 
     # Fetch the players using your SPARQL query function
     # Adjust the start and limit parameters based on the current page
     start = (page_number - 1) * players_per_page
-
-    ascending = request.GET.get('ascending', 'false') == 'true'
 
     nationalities = players_api.get_nationalities()
     teams = teams_api.get_teams()
     genders = players_api.get_genders()
     positions = players_api.get_positions()
 
-    # Initialize filters dictionary
-    filters = {}
+    props = None
 
-    # Collect filter parameters from the request
-    for key in ['name', 'nationality', 'league', 'team', 'gender', 'position']:
-        value = request.GET.get(key)
-        if value:
-            filters[key] = value
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        nationality = request.POST.get('nationality')
+        team = request.POST.get('team')
+        gender = request.POST.get('gender')
+        position = request.POST.get('position')
+        order = request.POST.get('order')
+
+        props = []
+
+        if name:
+            props.append({"prop": "name", "value": name})
+        if nationality:
+            props.append({"prop": "nationality", "value": nationality})
+        if team:
+            print(team)
+            props.append({"prop": "team", "value": team})
+        if gender:
+            props.append({"prop": "gender", "value": gender})
+        if position:
+            props.append({"prop": "position", "value": position})
+        if order:
+            props.append({"prop": "order", "value": order})
+
+        if not props:
+            props = None
 
     # Fetch the players using your SPARQL query function with filters
-    players = players_api.get_players_by_prop(start=start, limit=players_per_page, ascending=ascending)
+    players = players_api.get_players_by_prop(start=start, limit=players_per_page, props=props)
 
-    total_players = players_api.get_total_players()
+    total_players = players_api.get_total_players(props=props)
 
     page_obj = {
         "has_previous": page_number > 1,
@@ -138,23 +156,10 @@ def players_view(request):
         "next_page_number": page_number + 1,
     }
 
-    for league in teams:
-        print(league["label"], league["id"])
-
-    return render(request, 'players.html', {'players': players, 'page_obj': page_obj, "filters": {"nationalities": nationalities, "teams:": teams, "genders": genders, "positions": positions}})
+    return render(request, 'players.html', {'players': players, 'page_obj': page_obj, "filters": {"nationalities": nationalities, "teams": teams, "genders": genders, "positions": positions}, "form": {"name": request.POST.get('name'), "nationality": request.POST.get('nationality'), "team": request.POST.get('team'), "gender": request.POST.get('gender'), "position": request.POST.get('position'), "order": request.POST.get('order')}})
 
 
 @login_required(login_url='login')
 def squad_view(request):
-    return render(request, 'squad.html')
-
-
-
-
-
-
-
-
-
-
-
+    players = players_api.get_players()
+    return render(request, 'squad.html', {"players": players})
