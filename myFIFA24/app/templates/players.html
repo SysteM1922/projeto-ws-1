@@ -1,84 +1,179 @@
-{% extends "_base.html" %} {% block content %} {% include "navbar.html" %}
+{% extends "_base.html" %}
 
-<div class="container mx-auto px-4">
-  <table class="table-auto w-full text-white bg-gray-800 opacity-80">
-    <thead>
-      <tr>
-        <th class="px-4 py-2"></th>
-        <th class="px-4 py-2">Name</th>
-        <th class="px-4 py-2">Club</th>
-        <th class="px-4 py-2">Nationality</th>
-        <th class="px-4 py-2">
-          <a href="?ascending={% if request.GET.ascending == 'true' %}false{% else %}true{% endif %}">
-             OVR
-          </a>
-         </th>
-        <th class="px-4 py-2">Position</th>
-        <th class="px-4 py-2">Gender</th>
-        <th class="px-4 py-2">Skill Moves</th>
-        <th class="px-4 py-2">Week Foot Ability</th>
-        <th class="px-4 py-2">Work Rate</th>
-        <th class="px-4 py-2">PAC</th>
-        <th class="px-4 py-2">SHO</th>
-        <th class="px-4 py-2">PAS</th>
-        <th class="px-4 py-2">DRI</th>
-        <th class="px-4 py-2">DEF</th>
-        <th class="px-4 py-2">PHY</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for player in players %}
-      <tr
-        class="{{ forloop.counter|divisibleby:'2'|yesno:'bg-gray-700,bg-gray-800' }}"
-      >
-        <td class="border px-4 py-2">
-          <img
-            src="{{ player.image }}"
-            alt="{{ player.name }}"
-            class="w-12 h-12 object-cover"
-          />
-        </td>
-        <td class="border px-4 py-2">{{ player.name }}</td>
-        <td class="border px-4 py-2">
-          <img src="{{ player.team }}" class="w-12 h-12 object-cover" />
-        </td>
-        <td class="border px-4 py-2">{{ player.nationality }}</td>
-        <td class="border px-4 py-2">{{ player.ovr }}</td>
-        <td class="border px-4 py-2">{{ player.position }}</td>
-        <td class="border px-4 py-2">{{ player.gender|slice:":1" }}</td>
-        <td class="border px-4 py-2">{{ player.skills }}</td>
-        <td class="border px-4 py-2">{{ player.weakfoot }}</td>
-        <td class="border px-4 py-2">{{ player.attwr }}</td>
-        <td class="border px-4 py-2">{{ player.stats.pac }}</td>
-        <td class="border px-4 py-2">{{ player.stats.sho }}</td>
-        <td class="border px-4 py-2">{{ player.stats.pas }}</td>
-        <td class="border px-4 py-2">{{ player.stats.dri }}</td>
-        <td class="border px-4 py-2">{{ player.stats.def }}</td>
-        <td class="border px-4 py-2">{{ player.stats.phy }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+{% block content %}
+
+{% load functions %}
+
+{% include "navbar.html" %}
+
+<div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+  <!-- Filter line with dropdowns -->
+  <div class="container mx-auto mb-4">
+    <div class="flex justify-between">
+      <!-- Nationality filter -->
+      <div class="w-1/4 mx-1">
+        <form action="." method="get">
+          <label for="nationality" class="block text-white">Nationality:</label>
+          <select id="nationality" name="nationality"
+            class="w-full px-4 py-2 text-white bg-gray-800 opacity-80 border-0 rounded-md"
+            onchange="this.form.submit();">
+            <option value="">Select Nationality</option>
+            <!-- Example options -->
+            {% for nationality in filters.nationalities %}
+            <option value="{{ nationality.id }}">
+              {{ nationality.label }}
+            </option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+      <!-- Team filter -->
+      <div class="w-1/4 mx-1">
+        <form action="." method="get">
+          <label for="team" class="block text-white">Team:</label>
+          <select id="team" name="team" class="w-full px-4 py-2 text-white bg-gray-800 opacity-80 border-0 rounded-md"
+            onchange="this.form.submit();">
+            <option value="">Select League</option>
+            {% for team in filters.teams %}
+            <option value="{{ team.id }}">{{ team.label }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+      <!-- Gender filter -->
+      <div class="w-1/4 mx-1">
+        <form action="." method="get">
+          <label for="gender" class="block text-white">Gender:</label>
+          <select id="gender" name="gender"
+            class="w-full px-4 py-2 text-white bg-gray-800 opacity-80 border-0 rounded-md"
+            onchange="this.form.submit();">
+            <option value="">Select Gender</option>
+            {% for gender in filters.genders %}
+            <option value="{{ gender.id }}">{{ gender.label }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+      <!-- Position filter -->
+      <div class="w-1/4 mx-1">
+        <form action="." method="get">
+          <label for="position" class="block text-white">Position:</label>
+          <select id="position" name="position"
+            class="w-full px-4 py-2 text-white bg-gray-800 opacity-80 border-0 rounded-md"
+            onchange="this.form.submit();">
+            <option value="">Select Position</option>
+            {% for position in filters.positions %}
+            <option value="{{ position.id }}">{{ position.label }}</option>
+            {% endfor %}
+          </select>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto">
+    <table class="table-auto w-full text-white bg-gray-800 opacity-80">
+      <thead>
+        <tr>
+          <th class="px-2 py-4 text-center"></th>
+          <!-- Replacing "Name" with a search bar -->
+          <th class="px-4 py-2 text-center">
+            <form action="." method="get">
+              <input type="text" name="name" placeholder="Search by name"
+                class="w-full px-4 py-2 text-white bg-gray-800 opacity-80 border-0 rounded-md" />
+            </form>
+          </th>
+          <th class="px-2 py-2 text-center">Team</th>
+          <th class="px-4 py-2 text-center">Nationality</th>
+          <th class="px-4 py-2 text-center">
+            <a href="?ascending={% if request.GET.ascending == 'true' %}false{% else %}true{% endif %}">
+              OVR
+            </a>
+          </th>
+          <th class="px-2 py-2 text-center">Position</th>
+          <th class="px-2 py-2 text-center">Gender</th>
+          <th class="px-2 py-2 text-center">Skill Moves</th>
+          <th class="px-2 py-2 text-center">Week Foot Ability</th>
+          <th class="px-2 py-2 text-center">Work Rate</th>
+          <th class="px-2 py-2 text-center">PAC</th>
+          <th class="px-2 py-2 text-center">SHO</th>
+          <th class="px-2 py-2 text-center">PAS</th>
+          <th class="px-2 py-2 text-center">DRI</th>
+          <th class="px-2 py-2 text-center">DEF</th>
+          <th class="px-2 py-2 text-center">PHY</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+        <tr class="{{ forloop.counter|divisibleby:'2'|yesno:'bg-gray-700,bg-gray-800' }} border-y-2">
+          <td class="p-2 text-center">
+            <img src="{{ player.image }}" alt="{{ player.name }}" class="w-12 h-12 object-cover" />
+          </td>
+          <!-- The "Name" column is now the search bar -->
+          <td class="px-2 py-2 text-center">{{ player.name }}</td>
+          <td class="px-2 py-2 text-center">
+            <img src="{{ player.team }}" class="w-14 h-12 object-cover mx-auto" />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <img src="{{ player.flag }}" class="w-14 h-12 object-cover mx-auto" />
+          </td>
+          <td class="p-2 text-center">{{ player.ovr }}</td>
+          <td class="p-2 text-center">{{ player.position }}</td>
+          <td class="p-2 text-center">
+            {{ player.gender|slice:":1" }}
+          </td>
+          <td class="p-2 text-center">
+            <div class="flex text-center mx-auto w-max">
+              {{ player.skills }}<svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+              </svg>
+            </div>
+          </td>
+          <td class="p-2 text-center">
+            <div class="flex text-center mx-auto w-max">
+              {{ player.weakfoot }}<svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
+              </svg>
+            </div>
+          </td>
+          <td class="px-2 text-center">{{ player.attwr|compute_wr }}\{{ player.defwr|compute_wr }}</td>
+          <td class="px-2 text-center">{{ player.stats.pac }}</td>
+          <td class="px-2 text-center">{{ player.stats.sho }}</td>
+          <td class="px-2 text-center">{{ player.stats.pas }}</td>
+          <td class="px-2 text-center">{{ player.stats.dri }}</td>
+          <td class="px-2 text-center">{{ player.stats.def }}</td>
+          <td class="px-2 text-center">{{ player.stats.phy }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Adjust the container for the table with bigger horizontal margins -->
+  <div class="container mx-auto mt-8 px-8">
+    <!-- Pagination controls -->
+    <div class="pagination text-right">
+      <span class="step-links">
+        {% if page_obj.has_previous %}
+        <a href="?page=1" class="text-white hover:text-gray-300">&laquo; first</a>
+        <a href="?page={{ page_obj.previous_page_number }}" class="text-white hover:text-gray-300">previous</a>
+        {% endif %}
+
+        <span class="current text-white">
+          Page {{ page_obj.number }} of {{ page_obj.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="text-white hover:text-gray-300">next</a>
+        <a href="?page={{ page_obj.num_pages }}" class="text-white hover:text-gray-300">last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+  </div>
 </div>
 
-<!-- Pagination controls -->
-<div class="container mx-auto mt-8">
-  <div class="pagination text-right">
-     <span class="step-links">
-       {% if page_obj.has_previous %}
-       <a href="?page=1" class="text-white hover:text-gray-300">&laquo; first</a>
-       <a href="?page={{ page_obj.previous_page_number }}" class="text-white hover:text-gray-300">previous</a>
-       {% endif %}
- 
-       <span class="current text-white">
-         Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-       </span>
- 
-       {% if page_obj.has_next %}
-       <a href="?page={{ page_obj.next_page_number }}" class="text-white hover:text-gray-300">next</a>
-       <a href="?page={{ page_obj.paginator.num_pages }}" class="text-white hover:text-gray-300">last &raquo;</a>
-       {% endif %}
-     </span>
-  </div>
- </div>
 {% endblock %}

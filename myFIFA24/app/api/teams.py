@@ -7,13 +7,11 @@ def get_teams() -> list[dict]:
     PREFIX fifalp: <http://fifa24/league/pred/>
 
 
-    SELECT ?teamId ?teamLabel ?teamImage ?leagueId ?leagueLabel ?leagueImage
+    SELECT ?teamId ?teamLabel ?leagueId ?leagueLabel
     WHERE {
     	?teamId fifatp:label ?teamLabel .
         ?teamId fifatp:league ?leagueId .
-        ?teamId fifatp:imageUrl ?teamImage .
         ?leagueId fifalp:label ?leagueLabel .
-        ?leagueId fifalp:imageUrl ?leagueImage .
     }
     ORDER BY ?leagueLabel ?teamLabel
     """
@@ -27,16 +25,14 @@ def get_teams() -> list[dict]:
         league_id = team["leagueId"]
         if league_id not in leagues:
             leagues[league_id] = {
-                "id": league_id,
+                "id": league_id.split("/")[-1],
                 "label": team["leagueLabel"],
-                "image": team["leagueImage"],
                 "teams": []
             }
 
         leagues[league_id]["teams"].append({
-            "id": team["teamId"],
+            "id": team["teamId"].split("/")[-1],
             "label": team["teamLabel"],
-            "image": team["teamImage"]
         })
 
     for league in leagues.values():

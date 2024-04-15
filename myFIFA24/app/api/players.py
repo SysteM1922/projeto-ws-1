@@ -1,22 +1,35 @@
 import json
+import time
 from .utils import select
+
+cache = {}
 
 def get_nationalities() -> list[dict]:
     query = """
         PREFIX fifanp: <http://fifa24/nationality/pred/>
 
-        SELECT ?nationality ?label ?image
+        SELECT ?nationality ?label
         WHERE {
             ?nationality fifanp:label ?label .
-            ?nationality fifanp:imageUrl ?image .
         }
         ORDER BY ?label
         """
     
+    if query in cache:
+        result = cache[query]["result"]
+
+        for query in list(cache):
+            if time.time() - cache[query]["time"] > 60:
+                del cache[query]
+
+        return result
+    
     result = select(query)
 
     for nationality in result:
-        nationality["id"] = result["nationality"].split("/")[-1]
+        nationality["id"] = nationality["nationality"].split("/")[-1]
+
+    cache[query] = {"time": time.time(), "result": result}
 
     return result
 
@@ -31,31 +44,25 @@ def get_genders() -> list[dict]:
         ORDER BY ?label
         """
     
+    if query in cache:
+        result = cache[query]["result"]
+
+        for query in list(cache):
+            if time.time() - cache[query]["time"] > 60:
+                del cache[query]
+
+        return result
+    
     result = select(query)
 
     for gender in result:
         gender["id"] = gender["gender"].split("/")[-1]
 
+    cache[query] = {"time": time.time(), "result": result}
+
     return result
 
 def get_positions() -> list[dict]:
-
-    ret = {"defenders": {"GK": None,
-                         "CB": None,
-                         "RB": None,
-                         "RWB": None,
-                         "LB": None,
-                         "LWB": None},
-           "midfielders": {"CDM": None,
-                           "CM": None,
-                           "CAM": None,
-                           "RM": None,
-                           "LM": None,},
-           "attackers": {"LW": None,
-                         "RW": None,
-                         "CF": None,
-                         "ST": None}
-                         }
     
     query = """
         PREFIX fifapop: <http://fifa24/position/pred/>
@@ -66,26 +73,70 @@ def get_positions() -> list[dict]:
         }
         """
     
+    if query in list(cache):
+        result = cache[query]["result"]
+
+        for query in cache:
+            if time.time() - cache[query]["time"] > 60:
+                del cache[query]
+
+        return result
+    
+    ret = [{"label": "GK", "id": None},
+              {"label": "CB", "id": None},
+              {"label": "RB", "id": None},
+              {"label": "RWB", "id": None},
+              {"label": "LB", "id": None},
+              {"label": "LWB", "id": None},
+              {"label": "CDM", "id": None},
+              {"label": "CM", "id": None},
+              {"label": "CAM", "id": None},
+              {"label": "RM", "id": None},
+              {"label": "LM", "id": None},
+              {"label": "LW", "id": None},
+              {"label": "RW", "id": None},
+              {"label": "CF", "id": None},
+              {"label": "ST", "id": None},
+              ]
+    
     result = select(query)
 
-    for section in ret:
-        for position in ret[section]:
-            for pos in result:
-                if pos["label"] == position:
-                    ret[section][position] = pos["positionid"].split("/")[-1]
+    for position in ret:
+        for pos in result:
+            if pos["label"] == position["label"]:
+                position["id"] = pos["positionid"].split("/")[-1]
+
+    cache[query] = {"time": time.time(), "result": result}
 
     return ret
+
+def get_total_players() -> int:
+    query = """
+        PREFIX fifaplp: <http://fifa24/player/pred/>
+
+        SELECT (COUNT(?playerid) AS ?total)
+        WHERE {
+            ?playerid fifaplp:overallRating ?ovr .
+        }
+        """
+    
+    result = select(query)
+
+    return int(result[0]["total"])
 
 def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None, props: dict = None) -> list[dict]:
     if ascending is None:
         order = "DESC(?ovr) ?name"
     else:
-        if props["prop"] == "ovr":
-            order = f'{"ASC" if ascending else "DESC"}(?ovr) ?name'
-        elif props["prop"] == "name":
-            order = f'{"ASC" if ascending else "DESC"}(?name) DESC(?ovr)'
+        if props:
+            if props["prop"] == "ovr":
+                order = f'{"ASC" if ascending else "DESC"}(?ovr) ?name'
+            elif props["prop"] == "name":
+                order = f'{"ASC" if ascending else "DESC"}(?name) DESC(?ovr)'
+            else:
+                order = f'{"ASC" if ascending else "DESC"}(?{props["prop"]}) DESC(?ovr) ?name'
         else:
-            order = f'{"ASC" if ascending else "DESC"}(?{props["prop"]}) DESC(?ovr) ?name'
+            order = f'{"ASC" if ascending else "DESC"}(?ovr) ?name'
 
     name = ""
     gender = ""
@@ -174,11 +225,22 @@ def get_players_by_prop(start: int = 0, limit: int = 30, ascending: bool = None,
         OFFSET {start}
         LIMIT {limit}
         """
+    
+    if query in list(cache):
+
+        result = cache[query]["result"]
+        for query in cache:
+            if time.time() - cache[query]["time"] > 60:
+                del cache[query]
+        
+        return result
 
     result = select(query)
 
     for player in result:
         player["stats"] = json.loads(player["stats"])
+
+    cache[query] = {"time": time.time(), "result": result}
 
     return result
 
@@ -254,12 +316,23 @@ def get_players_by_team_guid(guid: str) -> list[dict]:
         GROUP BY ?playerid ?name ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr
         ORDER BY DESC(?ovr) ?name
         """
+
+    if query in cache:
+        result = cache[query]["result"]
+
+        for query in list(cache):
+            if time.time() - cache[query]["time"] > 60:
+                del cache[query]
+
+        return result
     
     result = select(query)
 
     for player in result:
         player["id"] = player["playerid"].split("/")[-1]
         player["stats"] = json.loads(player["stats"])
+
+    cache[query] = {"time": time.time(), "result": result}
 
     return result
 
