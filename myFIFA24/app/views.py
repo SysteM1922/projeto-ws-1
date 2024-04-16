@@ -179,7 +179,7 @@ def search_players(request):
 
     players = players_api.get_players_base_info_by_name(name=name)
     
-    #print("players:", players)
+    # print("players:", players)
     
     results = []
 
@@ -235,33 +235,55 @@ def save_squad(request):
     
 @login_required(login_url='login')  
 def squads_by_user(request):
-    squads = squads_api.get_squads_by_user_id(request.user.id)
+    # squads = squads_api.get_squads_by_user_id(request.user.id)
     # mock squads
-    """squads = [{
+    squads = [{
         "squadId": 1,
         "name": f"Squad {1}",
-        "formation": "4-4-2",
-        "players": [
-            {"id": 1, "shield": "https://fifa24.s3.amazonaws.com/shields/1.png", "pos": "GK"},
-            {"id": 2, "shield": "https://fifa24.s3.amazonaws.com/shields/2.png", "pos": "RB"},
-            {"id": 3, "shield": "https://fifa24.s3.amazonaws.com/shields/3.png", "pos": "CB"},
-            {"id": 4, "shield": "https://fifa24.s3.amazonaws.com/shields/4.png", "pos": "CB"},
-            {"id": 5, "shield": "https://fifa24.s3.amazonaws.com/shields/5.png", "pos": "LB"},
-            {"id": 6, "shield": "https://fifa24.s3.amazonaws.com/shields/6.png", "pos": "RM"},
-            {"id": 7, "shield": "https://fifa24.s3.amazonaws.com/shields/7.png", "pos": "CM"},
-            {"id": 8, "shield": "https://fifa24.s3.amazonaws.com/shields/8.png", "pos": "CM"},
-            {"id": 9, "shield": "https://fifa24.s3.amazonaws.com/shields/9.png", "pos": "LM"},
-            {"id": 10, "shield": "https://fifa24.s3.amazonaws.com/shields/10.png", "pos": "ST"},
-            {"id": 11, "shield": "https://fifa24.s3.amazonaws.com/shields/11.png", "pos": "ST"}
-        ]
-    }]"""
+        "formation": "4-3-3",
+        "players": [{'id': 'http://fifa24/player/guid/20801', 'pos': '1', 'shield':'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '2'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '3'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '4'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '5'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '6'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '7'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '8'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '9'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '10'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '11'}]
+    }]
 
+    players = [
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '1', 'shield':'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '2'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '3'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '4'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '5'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '6'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '7'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '8'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '9'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '10'}, 
+        {'id': 'http://fifa24/player/guid/20801', 'pos': '11'}
+    ]
+
+    # Extract the 'shield' attribute from the first player
+    first_shield = players[0]['shield']
+
+    # Iterate over the list starting from the second element
+    for i in range(1, len(players)):
+        # Update each player dictionary with the 'shield' attribute from the first player
+        players[i]['shield'] = first_shield
+
+    squads[0]["players"] = players
+    # print("players:", players)
     return render(request, 'squads.html', {'squads': squads, 'user_id': request.user.id})
 
 
 @login_required(login_url='login')
 def update_squad(request, squad_id):
-    squad = squads_api.get_squad_by_guid(squad_id)
+    # squad = squads_api.get_squad_by_guid(squad_id)
+    # this will return the players list with the shield attribute
+
+    squad = {
+        "squadId": 1,
+        "name": f"Squad {1}",
+        "formation": "4-3-3",
+        "players": [{'id': 'http://fifa24/player/guid/20801', 'pos': '1', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '2', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '3', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '4', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '5', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '6', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '7', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '8', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '9', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '10', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '11', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}]
+    }
+
+    # print("squad:", squad)
     return render(request, 'update_squad.html', {'squad': squad})
 
 last_player = None
