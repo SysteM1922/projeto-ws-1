@@ -327,7 +327,7 @@ def game_view(request):
 
 
 @login_required(login_url='login')  
-def update_squad(request, squad_id):
+def update_squad_post(request, squad_id):
     if request.method == 'POST':
         try:
             # Parse the JSON data from the request body
