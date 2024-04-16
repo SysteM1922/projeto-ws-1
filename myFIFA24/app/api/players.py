@@ -242,7 +242,7 @@ def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> 
         PREFIX fifagg: <http://fifa24/gender/guid/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?flag ?nationality ?team ?logo ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?flag ?nationality ?teamid ?team ?logo ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
             {{
             ?playerid fifaplp:gender ?genderid .
@@ -274,7 +274,7 @@ def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> 
             }}
             {extra_position}
         }}
-        GROUP BY ?playerid ?name ?flag ?nationality ?team ?logo ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr
+        GROUP BY ?playerid ?name ?flag ?nationality ?teamid ?team ?logo ?position ?ovr ?gender ?image ?skills ?weakfoot ?attwr ?defwr
         ORDER BY {order}
         OFFSET {start}
         LIMIT {limit}
@@ -292,6 +292,8 @@ def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> 
     result = select(query)
 
     for player in result:
+        player["id"] = player["playerid"].split("/")[-1]
+        player["teamid"] = player["teamid"].split("/")[-1]
         player["stats"] = json.loads(player["stats"])
 
     cache[query] = {"time": time.time(), "result": result}
@@ -356,12 +358,13 @@ def get_players_by_team_guid(guid: str) -> list[dict]:
         PREFIX fifapop: <http://fifa24/position/pred/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?flag ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
             ?playerid fifaplp:position ?positionid .
             ?positionid fifapop:shortLabel ?position .
             ?playerid fifaplp:nationality ?nationalityid .
-            ?nationalityid fifanp:imageUrl ?nationality .
+            ?nationalityid fifanp:imageUrl ?flag .
+            ?nationalityid fifanp:label ?nationality .
             ?playerid fifaplp:team ?teamid .
             FILTER(?teamid = fifatg:{guid})
             ?playerid fifaplp:overallRating ?ovr .
@@ -376,7 +379,7 @@ def get_players_by_team_guid(guid: str) -> list[dict]:
             ?playerid fifaplp:avatarUrl ?image .
             ?playerid fifaplp:stat ?stat .
         }}
-        GROUP BY ?playerid ?name ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr
+        GROUP BY ?playerid ?name ?flag ?nationality ?position ?ovr ?image ?skills ?weakfoot ?attwr ?defwr
         ORDER BY DESC(?ovr) ?name
         """
 
