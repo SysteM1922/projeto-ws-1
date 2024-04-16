@@ -330,25 +330,15 @@ def game_view(request):
 def update_squad_post(request, squad_id):
     if request.method == 'POST':
         try:
-            # Parse the JSON data from the request body
             data = json.loads(request.body)
-            squad_id = data.get('squadId')
             squad_name = data.get('squadName')
             squad_formation = data.get('squadFormation')
-            player_ids = data.get('playerIds')
+            players = data.get('players') # This is now an array of dictionaries with 'id' and 'position'
 
-            # Construct the squad object
-            squad = {
-                'id': squad_id,
-                'name': squad_name,
-                'formation': squad_formation,
-                'players': [{'id': player_id} for player_id in player_ids],
-            }
+            # Assuming you have a function to update the squad in your database
+            # This function should handle the squad_id, squad_name, squad_formation, and players array
+            result = squads_api.update_squad(squad_id, squad={"id": squad_id, "name": squad_name, "formation": squad_formation, "players": players})
 
-            # Call the update_squad function
-            result = update_squad(squad_id, squad)
-
-            # Return a JSON response based on the result
             if result:
                 return JsonResponse({'status': 'success', 'message': 'Squad saved successfully.'})
             else:

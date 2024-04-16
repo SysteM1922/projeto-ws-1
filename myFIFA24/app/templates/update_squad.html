@@ -464,42 +464,40 @@
     });
 
     function updateSquad() {
-        const playerIds = [];
+        const players = [];
         document.querySelectorAll(".player-rectangle").forEach(function (box) {
             const playerId = box.getAttribute("data-player-id");
-            if (playerId) {
-                playerIds.push(playerId);
+            const position = box.getAttribute("data-position"); // Assuming each box has a position attribute
+            if (playerId && position) {
+                players.push({ id: playerId, position: position });
             }
         });
-        // the squad name is the value rendered in the template -> squad.name
+    
         const squadName = document.getElementById("squadName").value;
         const squadFormation = document.getElementById("squadFormation").value;
-        // console.log("Squad Name:", squadName);
-        // console.log("Squad Formation:", squadFormation);
-        // GET ID from url
-        const squadId = window.location.pathname.split("/")[3];
-        // console.log("Squad ID:", squadId);
-        console.log("Player IDs:", playerIds);
-        fetch("/update-squad/", {
+        const squadId = window.location.pathname.split("/")[3]; // Adjust this line if necessary
+        const url = `/update-squad/${squadId}/`;
+    
+        fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": "{{ csrf_token }}",
             },
             body: JSON.stringify({
-                squadId: squadId,   
                 squadName: squadName,
                 squadFormation: squadFormation,
-                playerIds: playerIds,
+                players: players, // Sending the players array with both ID and position
             }),
         })
-            .then((response) => response.json())
-            .then((data) => {
-                console.log("Response:", data);
-                alert("Squad saved successfully!");
-            })
-            .catch((error) => console.error("Error:", error));
+        .then((response) => response.json())
+        .then((data) => {
+            console.log("Response:", data);
+            alert("Squad saved successfully!");
+        })
+        .catch((error) => console.error("Error:", error));
     }
+    
  
     
 </script>

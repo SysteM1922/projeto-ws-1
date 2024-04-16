@@ -37,5 +37,5 @@ urlpatterns = [
     #path('squads/<str:user_id>/delete/<str:squad_id>/', views.delete_squad, name='delete_squad'),
     path('squad/update/<str:squad_id>/', views.update_squad, name='update_squad'),
     path('game/', views.game_view, name='game'),
-    path('update-squad/', views.update_squad_post, name='update-squad'),
+    path('update-squad/<str:squad_id>/', views.update_squad_post, name='update_squad_post'),
 ]
