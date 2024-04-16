@@ -1,0 +1,52 @@
+{% extends "_base.html" %}
+{% block content %}
+{% include "navbar.html" %}
+{% load static %}
+
+<style>
+    .table-container {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+    table {
+        border-collapse: collapse;
+        width: 80%;
+        margin: auto;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+</style>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Formation</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody class=" text-white">
+            {% for squad in squads %}
+            <tr>
+                <td><a href="{% url 'update_squad' squad.squadId %}" class="update-link">{{ squad.name }}</a></td>
+                <td>{{ squad.formation }}</td>
+                <td><a href="#" class="delete-btn">Delete</a></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No squads found for this user.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

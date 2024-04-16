@@ -232,3 +232,36 @@ def save_squad(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+    
+@login_required(login_url='login')  
+def squads_by_user(request, user_id):
+    # squads = squads_api.get_squads_by_user_id(user_id)
+    squads = []
+    # mock squads
+
+    squads.append({
+        "squadId": 1,
+        "name": f"Squad {1}",
+        "formation": "4-4-2",
+        "players": [
+            {"id": 1, "shield": "https://fifa24.s3.amazonaws.com/shields/1.png", "pos": "GK"},
+            {"id": 2, "shield": "https://fifa24.s3.amazonaws.com/shields/2.png", "pos": "RB"},
+            {"id": 3, "shield": "https://fifa24.s3.amazonaws.com/shields/3.png", "pos": "CB"},
+            {"id": 4, "shield": "https://fifa24.s3.amazonaws.com/shields/4.png", "pos": "CB"},
+            {"id": 5, "shield": "https://fifa24.s3.amazonaws.com/shields/5.png", "pos": "LB"},
+            {"id": 6, "shield": "https://fifa24.s3.amazonaws.com/shields/6.png", "pos": "RM"},
+            {"id": 7, "shield": "https://fifa24.s3.amazonaws.com/shields/7.png", "pos": "CM"},
+            {"id": 8, "shield": "https://fifa24.s3.amazonaws.com/shields/8.png", "pos": "CM"},
+            {"id": 9, "shield": "https://fifa24.s3.amazonaws.com/shields/9.png", "pos": "LM"},
+            {"id": 10, "shield": "https://fifa24.s3.amazonaws.com/shields/10.png", "pos": "ST"},
+            {"id": 11, "shield": "https://fifa24.s3.amazonaws.com/shields/11.png", "pos": "ST"}
+        ]
+    })
+
+    return render(request, 'squads.html', {'squads': squads, 'user_id': user_id})
+
+
+@login_required(login_url='login')
+def update_squad(request, squad_id):
+    squad = squads_api.get_squad_by_guid(squad_id)
+    return render(request, 'update_squad.html', {'squad': squad})
