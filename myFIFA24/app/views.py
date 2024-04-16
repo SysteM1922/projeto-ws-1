@@ -179,7 +179,7 @@ def search_players(request):
 
     players = players_api.get_players_base_info_by_name(name=name)
     
-    print("players:", players)
+    # print("players:", players)
     
     results = []
 
@@ -190,7 +190,7 @@ def search_players(request):
             "shield": player["shield"],
             })
 
-    print("results:", results)
+    # print("results:", results)
 
     return JsonResponse(results, safe=False)
 

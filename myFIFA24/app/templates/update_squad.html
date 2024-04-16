@@ -8,6 +8,8 @@
     <div class="formation-container"
         style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin: 0 auto; width: 80%;">
         <!-- Goalkeeper -->
+        <!-- print the squad name -->
+        <input type="text" id="squadName" name="squadName" value="{{ squad.name }}" disabled />
 <div class="goalkeeper-row" style="display: flex; justify-content: center; width: 100%;">
     {% for player in squad.players %}
         {% if player.pos == '1' %}
@@ -59,7 +61,7 @@
 
 
 <div class="save-squad-section text-center">
-    <button class="success" id="saveSquadButton">Update Squad</button>
+    <button class="success" id="saveSquadButton" onclick="updateSquad()">Save Squad</button>
 </div>
 <!-- Modal Overlay -->
 <div id="playerModalOverlay" class="modal-overlay">
@@ -278,7 +280,7 @@
             modalOverlay.style.display = "block";
             clickedBox = playerBox; // Set the clicked box
         };
-     }
+    }
 
       // Add the onclick event to the "X" buttons
     document.querySelectorAll(".delete-button").forEach(function (button) {
@@ -460,62 +462,36 @@
         };
     });
 
-    document.getElementById("squadName").addEventListener("input", function () {
-        const saveSquadButton = document.getElementById("saveSquadButton");
-        if (this.value.trim() !== "") {
-            saveSquadButton.disabled = false;
-        } else {
-            saveSquadButton.disabled = true;
-        }
-    });
-
-    document
-        .getElementById("saveSquadButton")
-        .addEventListener("click", function () {
-            const squadName = document.getElementById("squadName").value;
-            // Implement your save functionality here
-            console.log(`Saving squad: ${squadName}`);
-            let alertShown = false;
-            let players = [];
-            document.querySelectorAll(".player-rectangle").forEach(function (box) {
-                let playerId = box.getAttribute("data-player-id");
-                // if any playerId is 1 then i cant save the squad
-                if (playerId === "1") {
-                    if (!alertShown) {
-                        alert("Please select a player for each position");
-                    }
-                    alertShown = true;
-                    return;
-                }
-                let playerPos = box.getAttribute("data-player-pos");
-                players.push({ id: playerId, pos: playerPos });
-            });
-            if (!alertShown) {
-                let squad = {
-                    name: squadName,
-                    id: -1, // this is the user id -> that i should get by request.user.id
-                    formation: "4-3-3",
-                    players: players,
-                };
-
-                // Send the squad data to your backend
-                fetch("/save-squad/", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": "{{ csrf_token }}",
-                    },
-                    body: JSON.stringify(squad),
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        console.log("Success:", data);
-                    })
-                    .catch((error) => {
-                        console.error("Error:", error);
-                    });
+    function updateSquad() {
+        const playerIds = [];
+        document.querySelectorAll(".player-rectangle").forEach(function (box) {
+            const playerId = box.getAttribute("data-player-id");
+            if (playerId) {
+                playerIds.push(playerId);
             }
         });
+        // the squad name is the value rendered in the template -> squad.name
+        const squadName = document.getElementById("squadName").value;
+        fetch("/save-squad/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": "{{ csrf_token }}",
+            },
+            body: JSON.stringify({
+                squadName: squadName,
+                playerIds: playerIds,
+            }),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log("Response:", data);
+                alert("Squad saved successfully!");
+            })
+            .catch((error) => console.error("Error:", error));
+    }
+ 
+    
 </script>
 
 {% endblock content %}
