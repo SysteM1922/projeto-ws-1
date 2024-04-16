@@ -12,3 +12,11 @@ def compute_wr(attr):
         return 'L'
     elif attr == '0':
         return 'M'
+
+@register.filter(name='compute_foot')
+@stringfilter
+def compute_foot(attr):
+    if attr == '1':
+        return 'Left'
+    elif attr == '2':
+        return 'Right'

@@ -597,13 +597,6 @@
       document.querySelectorAll(".player-rectangle").forEach(function (box) {
         let playerId = box.getAttribute("data-player-id");
         // if any playerId is 1 then i cant save the squad
-        if (playerId === "1") {
-          if (!alertShown) {
-            alert("Please select a player for each position");
-          }
-          alertShown = true;
-          return;
-        }
         let playerPos = box.getAttribute("data-player-pos");
         players.push({ id: playerId, pos: playerPos });
       });

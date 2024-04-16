@@ -2,6 +2,8 @@
 
 {% block content %}
 
+{% load functions %}
+
 {% include "navbar.html" %}
 
 <div class="flex space-y-4 max-w-screen-xl mx-auto py-10 my-10 text-white bg-gray-800 bg-opacity-60 rounded-lg">
@@ -10,28 +12,52 @@
             <img src="{{ player.card }}" alt="{{ player.name }}" class="w-96 object-contain">
         </div>
         <div class="grid grid-cols-2">
-            <div class="flex flex-col space-y-4">
-                <span class="fflex items-center">
+            <div class="flex flex-col">
+                <span class="fflex items-center h-8">
                     Name
                 </span>
-                <span class="flex items-center">
+                <span class="flex items-center h-8">
                     Team
                 </span>
-                <span class="flex items-center">
+                <span class="flex items-center h-8">
                     Nation
                 </span>
+                <span class="flex items-center h-8">
+                    Skills
+                </span>
+                <span class="flex items-center h-8">
+                    Weak Foot
+                </span>
+                <span class="flex items-center h-8">
+                    Foot
+                </span>
+                <span class="flex items-center h-8">
+                    Height
+                </span>
+                <span class="flex items-center h-8">
+                    Weight
+                </span>
+                <span class="flex items-center h-8">
+                    Att. WR
+                </span>
+                <span class="flex items-center h-8">
+                    Def. WR
+                </span>
+                <span class="flex items-center h-8">
+                    Age
+                </span>
             </div>
-            <div class="flex flex-col space-y-4">
-                <span class="font-bold items-center">
+            <div class="flex flex-col">
+                <span class="font-bold items-center h-8">
                     {{ player.name }}
                 </span>
-                <span class="flex items-center">
-                    <img src="{{ player.team }}" alt="{{ player.teamName }}" class="w-8 object-contain mr-2">
+                <span class="flex items-center h-8">
+                    <img src="{{ player.team }}" alt="{{ player.teamName }}" class="h-8 object-contain mr-2">
                     <a href="/team/{{ player.teamid }}" class="underline hover:text-blue-500">
                         {{ player.teamName }}
                     </a>
                 </span>
-                <span class="flex items-center">
+                <span class="flex items-center h-8">
                     <img src="{{ player.flag }}" alt="{{ player.nationality }}" class="h-8 object-contain mr-2">
                     {{ player.nationality }}
                 </span>
