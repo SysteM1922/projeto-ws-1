@@ -301,31 +301,42 @@ def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> 
 def get_player_by_guid(guid: str) -> dict:
     query = f"""
         PREFIX fifaplp: <http://fifa24/player/pred/>
+        PREFIX fifaplg: <http://fifa24/player/guid/>
         PREFIX fifanp: <http://fifa24/nationality/pred/>
         PREFIX fifatp: <http://fifa24/team/pred/>
         PREFIX fifapop: <http://fifa24/position/pred/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?card (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?nationality ?flag ?teamid ?team ?teamName ?position ?ovr ?gender ?card ?birth ?height ?weight ?skills ?weakfoot ?foot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
             ?playerid fifaplp:gender ?genderid .
-            FILTER(?playerid = <{guid}>)
+            FILTER(?playerid = fifaplg:{guid})
             ?genderid fifagp:label ?gender .
             ?playerid fifaplp:position ?positionid .
             ?positionid fifapop:shortLabel ?position .
             ?playerid fifaplp:nationality ?nationalityid .
             ?nationalityid fifanp:label ?nationality .
+            ?nationalityid fifanp:imageUrl ?flag .
             ?playerid fifaplp:team ?teamid .
             ?teamid fifatp:imageUrl ?team .
+            ?teamid fifatp:label ?teamName .
             ?playerid fifaplp:overallRating ?ovr .
             ?playerid fifaplp:firstName ?fName .
             ?playerid fifaplp:lastName ?lName .
             OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
             BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
             ?playerid fifaplp:shieldUrl ?card .
+            ?playerid fifaplp:birthdate ?birth .
+            ?playerid fifaplp:height ?height .
+            ?playerid fifaplp:weight ?weight .
+            ?playerid fifaplp:skillMoves ?skills .
+            ?playerid fifaplp:weakFootAbility ?weakfoot .
+            ?playerid fifaplp:preferredFoot ?foot .
+            ?playerid fifaplp:attackingWorkRate ?attwr .
+            ?playerid fifaplp:defensiveWorkRate ?defwr .
             ?playerid fifaplp:stat ?stat .
         }}
-        GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?gender ?card
+        GROUP BY ?playerid ?name ?nationality ?flag ?teamid ?team ?teamName ?position ?ovr ?gender ?card ?birth ?height ?weight ?skills ?weakfoot ?foot ?attwr ?defwr
         """
 
     result = select(query)
@@ -335,6 +346,7 @@ def get_player_by_guid(guid: str) -> dict:
     
     player = result[0]
     player["stats"] = json.loads(player["stats"])
+    player["teamid"] = player["teamid"].split("/")[-1]
 
     return player
 

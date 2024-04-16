@@ -1,0 +1,45 @@
+{% extends "_base.html" %}
+
+{% block content %}
+
+{% include "navbar.html" %}
+
+<div class="flex space-y-4 max-w-screen-xl mx-auto py-10 my-10 text-white bg-gray-800 bg-opacity-60 rounded-lg">
+    <div class="grid grid-rows-2 border-r-2 border-gray-900 px-5">
+        <div class="flex items-center justify-center pb-5">
+            <img src="{{ player.card }}" alt="{{ player.name }}" class="w-96 object-contain">
+        </div>
+        <div class="grid grid-cols-2">
+            <div class="flex flex-col space-y-4">
+                <span class="fflex items-center">
+                    Name
+                </span>
+                <span class="flex items-center">
+                    Team
+                </span>
+                <span class="flex items-center">
+                    Nation
+                </span>
+            </div>
+            <div class="flex flex-col space-y-4">
+                <span class="font-bold items-center">
+                    {{ player.name }}
+                </span>
+                <span class="flex items-center">
+                    <img src="{{ player.team }}" alt="{{ player.teamName }}" class="h-8 object-contain mr-2">
+                    <a href="/team/{{ player.teamid }}" class="underline hover:text-blue-500">
+                        {{ player.teamName }}
+                    </a>
+                </span>
+                <span class="flex items-center">
+                    <img src="{{ player.flag }}" alt="{{ player.nationality }}" class="h-8 object-contain mr-2">
+                    {{ player.nationality }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="grid grid-cols-3 grid-rows-2 w-full">
+
+    </div>
+</div>
+{% endblock content %}

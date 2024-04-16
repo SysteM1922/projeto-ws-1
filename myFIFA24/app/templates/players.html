@@ -90,12 +90,13 @@
                   document.getElementById('team').value = '';
                   document.getElementById('gender').value = '';
                   document.getElementById('position').value = '';
+                  document.getElementById('name').value = '';
                   this.form.submit();
                 });
               </script>
             </th>
             <th class="px-4 py-2 text-center">
-              <input type="text" name="name" placeholder="Search by name"
+              <input type="text" name="name" placeholder="Search by name" value="{{ form.name }}"
                 class="w-full px-4 py-2 text-white bg-gray-800 opacity-80 border-0 rounded-md" onchange="this.form.submit()" />
             </th>
             <th class="px-2 py-2 text-center">Team</th>
@@ -131,7 +132,9 @@
           {% for player in players %}
           <tr class="{{ forloop.counter|divisibleby:'2'|yesno:'bg-gray-700,bg-gray-800' }} border-y-2">
             <td class="p-2 text-center">
-              <img src="{{ player.image }}" alt="{{ player.name }}" class="w-12 h-12 object-contain" />
+              <a href="{% url 'player' player.id %}">
+                <img src="{{ player.card }}" alt="{{ player.name }}" class="w-12 h-12 object-contain" />
+              </a>
             </td>
             <!-- The "Name" column is now the search bar -->
             <td class="px-2 py-2 text-center">{{ player.name }}</td>
