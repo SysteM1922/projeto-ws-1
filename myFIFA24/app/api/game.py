@@ -1,6 +1,6 @@
-import json
-from utils import select, ask
+from .utils import select, ask
 from unidecode import unidecode
+import json
 import random
 
 def get_random_player() -> dict:
@@ -11,44 +11,53 @@ def get_random_player() -> dict:
     PREFIX fifatp: <http://fifa24/team/pred/>
     PREFIX fifapop: <http://fifa24/position/pred/>
 
-    SELECT ?playerid ?name ?nationality ?team ?position ?ovr ?image (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+    SELECT ?playerid ?name ?image ?nationality ?flag ?teamName ?team ?position ?ovr (CONCAT("{",GROUP_CONCAT(?stat; separator=", "), "}") AS ?stats)
     WHERE {
         ?playerid fifaplp:overallRating ?ovr .
         FILTER(?ovr > 74)
+        ?playerid fifaplp:avatarUrl ?image .
         ?playerid fifaplp:position ?positionid .
         ?positionid fifapop:shortLabel ?position .
+        FILTER (?position != "GK")
         ?playerid fifaplp:nationality ?nationalityid .
         ?nationalityid fifanp:label ?nationality .
+        ?nationalityid fifanp:imageUrl ?flag .
         ?playerid fifaplp:team ?teamid .
+        ?teamid fifatp:label ?teamName .
         ?teamid fifatp:imageUrl ?team .
         ?playerid fifaplp:firstName ?fName .
         ?playerid fifaplp:lastName ?lName .
         OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
         BIND(COALESCE(?cName, CONCAT(?fName, " ", ?lName)) AS ?name)
-        ?playerid fifaplp:shieldUrl ?image .
         ?playerid fifaplp:stat ?stat .
     }
-    GROUP BY ?playerid ?name ?nationality ?team ?position ?ovr ?image
+    GROUP BY ?playerid ?name ?image ?nationality ?flag ?teamName ?team ?position ?ovr
     """
 
-    return random.choice(select(query))
+    player = random.choice(select(query))
+
+    if not player:
+        return None
+    
+    player["stats"] = json.loads(player["stats"])
+    player["id"] = player["playerid"].split("/")[-1]
+
+    return player
 
 def guess_stat(player_guid: str, stat: str, value: str) -> bool:
     
-    if value.isdigit():
+    obj = None
+    if stat == "ovr":
         obj = f"\"{value}\"^^xsd:int"
-    else:
-        if stat == "stat":
-            obj = f"\"{value}\""
+    elif stat != "name":
+        obj = f"\\\"{stat}\\\":{value}"
 
-    if stat == "stat":
-        args = f"<{player_guid}> fifaplp:{stat} {obj} ."
-    elif stat == "ovr":
+    if stat == "ovr":
         args = f"<{player_guid}> fifaplp:overallRating {obj} ."
     elif stat == "name":
         return guess_name(player_guid, value)
     else:
-        return False
+        args = f"<{player_guid}> fifaplp:stat \"{obj}\" ."
 
     query = f"""
     PREFIX fifaplp: <http://fifa24/player/pred/>

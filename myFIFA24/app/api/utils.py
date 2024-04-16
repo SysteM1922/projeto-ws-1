@@ -30,6 +30,8 @@ def ask(query: str) -> dict:
     }
     result = accessor.sparql_select(body=payload, repo_name=repo_name)
 
+    print(result)
+
     try:
         return json.loads(result)["boolean"]
     

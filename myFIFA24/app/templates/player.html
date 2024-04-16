@@ -104,12 +104,16 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-cols-3 w-full">
-            <div class="grid grid-rows-2 p-5">
-                <div class="mx-auto w-full justify-center">
+        <div class="w-full">
+            <div class="flex mb-10">
+                <div class="mx-5 w-full justify-center">
                     <div class="flex pb-2 justify-center">
                         <span class="text-2xl font-bold">
+                            {% if player.position == 'GK' %}
+                            Diving
+                            {% else %}
                             Pace
+                            {% endif %}
                         </span>
                         <span class="flex flex-col w-full items-end text-2xl font-bold">
                             {{ player.stats.pac }}
@@ -118,6 +122,16 @@
                     <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.pac }}%"></div>
                     </div>
+                    {% if player.position == 'GK' %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Diving
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.gkDiving }}
+                        </span>
+                    </div>
+                    {% else %}
                     <div class="flex justify-center pt-2">
                         <span class="w-full text-lg">
                             Acceleration
@@ -134,74 +148,16 @@
                             {{ player.stats.sprintSpeed }}
                         </span>
                     </div>
+                    {% endif %}
                 </div>
-                <div class="mx-auto w-full justify-center">
+                <div class="mx-5 w-full justify-center">
                     <div class="flex pb-2 justify-center">
                         <span class="text-2xl font-bold">
-                            Dribbling
-                        </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
-                            {{ player.stats.dri }}
-                        </span>
-                    </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.dri }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Agility
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.agility }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Balance
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.balance }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Reactions
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.reactions }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Ball Control
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.ballControl }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Dribbling
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.dribbling }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Composure
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.composure }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-rows-2 p-5">
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
+                            {% if player.position == 'GK' %}
+                            Handling
+                            {% else %}
                             Shooting
+                            {% endif %}
                         </span>
                         <span class="flex flex-col w-full items-end text-2xl font-bold">
                             {{ player.stats.sho }}
@@ -210,6 +166,16 @@
                     <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.sho }}%"></div>
                     </div>
+                    {% if player.position == 'GK' %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Handling
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.gkHandling }}
+                        </span>
+                    </div>
+                    {% else %}
                     <div class="flex justify-center pt-2">
                         <span class="w-full text-lg">
                             Positioning
@@ -258,66 +224,16 @@
                             {{ player.stats.penalties }}
                         </span>
                     </div>
+                    {% endif %}
                 </div>
-                <div class="mx-auto w-full justify-center">
+                <div class="mx-5 w-full justify-center">
                     <div class="flex pb-2 justify-center">
                         <span class="text-2xl font-bold">
-                            Defending
-                        </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
-                            {{ player.stats.def }}
-                        </span>
-                    </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.def }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Interceptions
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.interceptions}}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Heading Accuracy
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.headingAccuracy }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Def. Awareness
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.defensiveAwareness }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Standing Tackle
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.standingTackle }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Sliding Tackle
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.slidingTackle }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-rows-2 p-5">
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
+                            {% if player.position == 'GK' %}
+                            Kicking
+                            {% else %}
                             Passing
+                            {% endif %}
                         </span>
                         <span class="flex flex-col w-full items-end text-2xl font-bold">
                             {{ player.stats.pas }}
@@ -326,6 +242,16 @@
                     <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.pas }}%"></div>
                     </div>
+                    {% if player.position == 'GK' %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Kicking
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.gkKicking }}
+                        </span>
+                    </div>
+                    {% else %}
                     <div class="flex justify-center pt-2">
                         <span class="w-full text-lg">
                             Vision
@@ -374,11 +300,170 @@
                             {{ player.stats.curve }}
                         </span>
                     </div>
+                    {% endif %}
                 </div>
-                <div class="mx-auto w-full justify-center">
+            </div>
+            <div class="flex">
+                <div class="mx-5 w-full justify-center">
                     <div class="flex pb-2 justify-center">
                         <span class="text-2xl font-bold">
+                            {% if player.position == 'GK' %}
+                            Reflexes
+                            {% else %}
+                            Dribbling
+                            {% endif %}
+                        </span>
+                        <span class="flex flex-col w-full items-end text-2xl font-bold">
+                            {{ player.stats.dri }}
+                        </span>
+                    </div>
+                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.dri }}%"></div>
+                    </div>
+                    {% if player.position == 'GK' %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Reflexes
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.gkReflexes }}
+                        </span>
+                    </div>
+                    {% else %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Agility
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.agility }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Balance
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.balance }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Reactions
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.reactions }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Ball Control
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.ballControl }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Dribbling
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.dribbling }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Composure
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.composure }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="mx-5 w-full justify-center">
+                    <div class="flex pb-2 justify-center">
+                        <span class="text-2xl font-bold">
+                            {% if player.position == 'GK' %}
+                            Speed
+                            {% else %}
+                            Defending
+                            {% endif %}
+                        </span>
+                        <span class="flex flex-col w-full items-end text-2xl font-bold">
+                            {{ player.stats.def }}
+                        </span>
+                    </div>
+                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
+                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.def }}%"></div>
+                    </div>
+                    {% if player.position == 'GK' %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Acceleration
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.acceleration }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Sprint Speed
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.sprintSpeed }}
+                        </span>
+                    </div>
+                    {% else %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Interceptions
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.interceptions}}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Heading Accuracy
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.headingAccuracy }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Def. Awareness
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.defensiveAwareness }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Standing Tackle
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.standingTackle }}
+                        </span>
+                    </div>
+                    <div class="flex justify-center">
+                        <span class="w-full text-lg">
+                            Sliding Tackle
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.slidingTackle }}
+                        </span>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="mx-5 w-full justify-center">
+                    <div class="flex pb-2 justify-center">
+                        <span class="text-2xl font-bold">
+                            {% if player.position == 'GK' %}
+                            Positioning
+                            {% else %}
                             Physicality
+                            {% endif %}
                         </span>
                         <span class="flex flex-col w-full items-end text-2xl font-bold">
                             {{ player.stats.phy }}
@@ -387,6 +472,16 @@
                     <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
                         <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.phy }}%"></div>
                     </div>
+                    {% if player.position == 'GK' %}
+                    <div class="flex justify-center pt-2">
+                        <span class="w-full text-lg">
+                            Positioning
+                        </span>
+                        <span class="flex flex-col items-end text-lg">
+                            {{ player.stats.gkPositioning }}
+                        </span>
+                    </div>
+                    {% else %}
                     <div class="flex justify-center pt-2">
                         <span class="w-full text-lg">
                             Jumping
@@ -427,6 +522,7 @@
                             {{ player.stats.slidingTackle }}
                         </span>
                     </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

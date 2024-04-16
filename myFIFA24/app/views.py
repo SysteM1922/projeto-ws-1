@@ -3,16 +3,16 @@ from .api import leagues as leagues_api
 from .api import teams as teams_api
 from .api import players as players_api 
 from .api import squads as squads_api
+from .api import game as game_api
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Profile
-# Create your views here.
-
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 import json
+import random
 
 @login_required(login_url='login')
 def index(request):
@@ -235,11 +235,9 @@ def save_squad(request):
     
 @login_required(login_url='login')  
 def squads_by_user(request):
-    # squads = squads_api.get_squads_by_user_id(user_id)
-    squads = []
+    squads = squads_api.get_squads_by_user_id(request.user.id)
     # mock squads
-
-    squads.append({
+    """squads = [{
         "squadId": 1,
         "name": f"Squad {1}",
         "formation": "4-4-2",
@@ -256,7 +254,7 @@ def squads_by_user(request):
             {"id": 10, "shield": "https://fifa24.s3.amazonaws.com/shields/10.png", "pos": "ST"},
             {"id": 11, "shield": "https://fifa24.s3.amazonaws.com/shields/11.png", "pos": "ST"}
         ]
-    })
+    }]"""
 
     return render(request, 'squads.html', {'squads': squads, 'user_id': request.user.id})
 
@@ -265,3 +263,42 @@ def squads_by_user(request):
 def update_squad(request, squad_id):
     squad = squads_api.get_squad_by_guid(squad_id)
     return render(request, 'update_squad.html', {'squad': squad})
+
+last_player = None
+last_stat = None
+guessed = False
+
+@login_required(login_url='login')
+def game_view(request):
+
+    global last_player
+    global last_stat
+    global guessed
+
+    
+    value = request.POST.get('value', None)
+
+    print(value)
+
+    if request.method == 'POST':
+
+        if value and not guessed:
+    
+            flag = game_api.guess_stat(last_player["playerid"], last_stat, value)
+            
+            guessed = True
+    
+            return render(request, 'game.html', {'player': last_player, 'stat': last_stat, 'correct': flag, "value": ""})
+        
+    guessed = False
+
+    stats = ["name", "ovr", "pac", "sho", "pas", "dri", "def", "phy"]
+
+    player = game_api.get_random_player()
+
+    stat = random.choice(stats)
+
+    last_player = player
+    last_stat = stat
+
+    return render(request, 'game.html', {'player': player, 'stat': stat, "value": ""})

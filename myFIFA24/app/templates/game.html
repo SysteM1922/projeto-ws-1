@@ -5,432 +5,189 @@
 {% load functions %}
 
 {% include "navbar.html" %}
-<div class="felx py-10">
-    <div class="flex max-w-screen-xl mx-auto py-10 text-white bg-gray-800 bg-opacity-60 rounded-lg">
-        <div class="border-r-2 border-gray-900 px-5">
-            <div class="flex flex-col pb-5">
-                <img src="{{ player.card }}" alt="{{ player.name }}" class="w-72 object-contain">
-            </div>
-            <div class="flex">
-                <div class="flex flex-col mr-5">
-                    <span class="flex items-center h-8">
-                        Name
-                    </span>
-                    <span class="flex items-center h-8">
-                        Team
-                    </span>
-                    <span class="flex items-center h-8">
-                        Nation
-                    </span>
-                    <span class="flex items-center h-8">
-                        Gender
-                    </span>
-                    <span class="flex items-center h-8">
-                        Skills
-                    </span>
-                    <span class="flex items-center h-8">
-                        Weak Foot
-                    </span>
-                    <span class="flex items-center h-8">
-                        Foot
-                    </span>
-                    <span class="flex items-center h-8">
-                        Height
-                    </span>
-                    <span class="flex items-center h-8">
-                        Weight
-                    </span>
-                    <span class="flex items-center h-8">
-                        Att. WR
-                    </span>
-                    <span class="flex items-center h-8">
-                        Def. WR
-                    </span>
-                    <span class="flex items-center h-8">
-                        Age
-                    </span>
-                </div>
-                <div class="flex flex-col">
-                    <span class="font-bold items-center h-8">
+
+<form method="POST">{% csrf_token %}
+    <div class="felx py-10">
+        <div class="flex max-w-screen-xl mx-auto py-10 text-white bg-gray-800 bg-opacity-60 rounded-lg">
+            <div class="border-r-2 border-gray-900 px-5 grid grid-rows-2">
+                <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                    <img src="{{ player.image }}" alt="{{ player.name }}"
+                        class="w-72 object-contain mb-4 rounded-full shadow-2xl">
+                    <span class="text-2xl font-bold text-center m-2">
+                        {% if stat == 'name' %}
+                        {% if correct == False %}
+                        <span class="text-red-500">{{ player.name }}</span>
+                        {% elif correct == True %}
+                        <span class="text-green-500">{{ player.name }}</span>
+                        {% else %}
+                        <input type="text" name="value" id="value" placeholder="------" value="{{ value }}"
+                            class="w-64 border border-gray-900 rounded-lg bg-gray-800 text-white text-2xl text-center p-0"
+                            onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                        {% endif %}
+                        {% else %}
                         {{ player.name }}
+                        {% endif %}
+                        ({{ player.position }})
                     </span>
-                    <span class="flex items-center h-8">
-                        <img src="{{ player.team }}" alt="{{ player.teamName }}" class="h-8 object-contain mr-2">
-                        <a href="/team/{{ player.teamid }}" class="underline hover:text-blue-500">
-                            {{ player.teamName }}
-                        </a>
+
+                </div>
+                <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                    <span class="text-8xl font-bold">
+                        OVR
                     </span>
-                    <span class="flex items-center h-8">
-                        <img src="{{ player.flag }}" alt="{{ player.nationality }}" class="h-8 object-contain mr-2">
-                        {{ player.nationality }}
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.gender }}
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.skills }}
-                        <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                        </svg>
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.weakfoot }}
-                        <svg class="w-6 h-6 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z" />
-                        </svg>
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.foot|compute_foot }}
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.height }} cm
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.weight }} kg
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.attwr|compute_full_wr }}
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.defwr|compute_full_wr }}
-                    </span>
-                    <span class="flex items-center h-8">
-                        {{ player.birth|compute_age }} years old
+                    <span class="text-8xl font-bold">
+                        {% if stat == 'ovr' %}
+                        {% if correct == False %}
+                        <span class="text-red-500">{{ player.ovr }}</span>
+                        {% elif correct == True %}
+                        <span class="text-green-500">{{ player.ovr }}</span>
+                        {% else %}
+                        <input type="text" name="value" id="ovr" placeholder="--" value="{{ value }}"
+                            class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                            onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                        {% endif %}
+                        {% else %}
+                        {{ player.ovr }}
+                        {% endif %}
                     </span>
                 </div>
             </div>
-        </div>
-        <div class="grid grid-cols-3 w-full">
-            <div class="grid grid-rows-2 p-5">
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
-                            Pace
+            <div class="grid grid-rwos-2 w-full">
+                <div class="grid grid-cols-4 p-5">
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <img src="{{ player.team }}" alt="{{ player.teamName }}" class="w-72 object-contain">
+                    </div>
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <span class="text-8xl font-bold">
+                            PAC
                         </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
+                        <span class="text-8xl font-bold">
+                            {% if stat == 'pac' %}
+                            {% if correct == False %}
+                            <span class="text-red-500">{{ player.stats.pac }}</span>
+                            {% elif correct == True %}
+                            <span class="text-green-500">{{ player.stats.pac }}</span>
+                            {% else %}
+                            <input type="text" name="value" id="pac" placeholder="--" value="{{ value }}"
+                                class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                                onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                            {% endif %}
+                            {% else %}
                             {{ player.stats.pac }}
+                            {% endif %}
                         </span>
                     </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.pac }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Acceleration
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <span class="text-8xl font-bold">
+                            SHO
                         </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.acceleration }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Sprint Speed
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.sprintSpeed }}
-                        </span>
-                    </div>
-                </div>
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
-                            Dribbling
-                        </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
-                            {{ player.stats.dri }}
-                        </span>
-                    </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.dri }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Agility
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.agility }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Balance
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.balance }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Reactions
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.reactions }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Ball Control
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.ballControl }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Dribbling
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.dribbling }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Composure
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.composure }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-rows-2 p-5">
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
-                            Shooting
-                        </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
+                        <span class="text-8xl font-bold">
+                            {% if stat == 'sho' %}
+                            {% if correct == False %}
+                            <span class="text-red-500">{{ player.stats.sho }}</span>
+                            {% elif correct == True %}
+                            <span class="text-green-500">{{ player.stats.sho }}</span>
+                            {% else %}
+                            <input type="text" name="value" id="sho" placeholder="--" value="{{ value }}"
+                                class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                                onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                            {% endif %}
+                            {% else %}
                             {{ player.stats.sho }}
+                            {% endif %}
                         </span>
                     </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.sho }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Positioning
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <span class="text-8xl font-bold">
+                            PAS
                         </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.positioning }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Finishing
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.finishing }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Shot Power
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.shotPower }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Long Shots
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.longShots }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Volleys
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.volleys }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Penalties
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.penalties }}
-                        </span>
-                    </div>
-                </div>
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
-                            Defending
-                        </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
-                            {{ player.stats.def }}
-                        </span>
-                    </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.def }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Interceptions
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.interceptions}}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Heading Accuracy
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.headingAccuracy }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Def. Awareness
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.defensiveAwareness }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Standing Tackle
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.standingTackle }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Sliding Tackle
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.slidingTackle }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-rows-2 p-5">
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
-                            Passing
-                        </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
+                        <span class="text-8xl font-bold">
+                            {% if stat == 'pas' %}
+                            {% if correct == False %}
+                            <span class="text-red-500">{{ player.stats.pas }}</span>
+                            {% elif correct == True %}
+                            <span class="text-green-500">{{ player.stats.pas }}</span>
+                            {% else %}
+                            <input type="text" name="value" id="pas" placeholder="--" value="{{ value }}"
+                                class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                                onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                            {% endif %}
+                            {% else %}
                             {{ player.stats.pas }}
-                        </span>
-                    </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.pas }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Vision
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.vision }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Crossing
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.crossing }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            FK. Accuracy
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.freeKickAccuracy }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Short Passing
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.shortPassing }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Long Passing
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.longPassing }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Curve
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.curve }}
+                            {% endif %}
                         </span>
                     </div>
                 </div>
-                <div class="mx-auto w-full justify-center">
-                    <div class="flex pb-2 justify-center">
-                        <span class="text-2xl font-bold">
-                            Physicality
+                <div class="grid grid-cols-4 p-5">
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <div class="flex pb-2 justify-center">
+                            <img src="{{ player.flag }}" alt="{{ player.nationality }}" class="w-72 object-contain">
+                        </div>
+                    </div>
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <span class="text-8xl font-bold">
+                            DRI
                         </span>
-                        <span class="flex flex-col w-full items-end text-2xl font-bold">
+                        <span class="text-8xl font-bold">
+                            {% if stat == 'dri' %}
+                            {% if correct == False %}
+                            <span class="text-red-500">{{ player.stats.dri }}</span>
+                            {% elif correct == True %}
+                            <span class="text-green-500">{{ player.stats.dri }}</span>
+                            {% else %}
+                            <input type="text" name="value" id="dri" placeholder="--" value="{{ value }}"
+                                class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                                onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                            {% endif %}
+                            {% else %}
+                            {{ player.stats.dri }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <span class="text-8xl font-bold">
+                            DEF
+                        </span>
+                        <span class="text-8xl font-bold">
+                            {% if stat == 'def' %}
+                            {% if correct == False %}
+                            <span class="text-red-500">{{ player.stats.def }}</span>
+                            {% elif correct == True %}
+                            <span class="text-green-500">{{ player.stats.def }}</span>
+                            {% else %}
+                            <input type="text" name="value" id="def" placeholder="--" value="{{ value }}"
+                                class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                                onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                            {% endif %}
+                            {% else %}
+                            {{ player.stats.def }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="flex flex-col pb-2 justify-center mx-auto items-center">
+                        <span class="text-8xl font-bold">
+                            PHY
+                        </span>
+                        <span class="text-8xl font-bold">
+                            {% if stat == 'phy' %}
+                            {% if correct == False %}
+                            <span class="text-red-500">{{ player.stats.phy }}</span>
+                            {% elif correct == True %}
+                            <span class="text-green-500">{{ player.stats.phy }}</span>
+                            {% else %}
+                            <input type="text" name="value" id="phy" placeholder="--" value="{{ value }}"
+                                class="w-48 border border-gray-900 rounded-lg bg-gray-800 text-white text-8xl text-center p-0"
+                                onkeypress="if (event.keyCode == 13) { submitForm(); }">
+                            {% endif %}
+                            {% else %}
                             {{ player.stats.phy }}
-                        </span>
-                    </div>
-                    <div class="w-full bg-gray-900 rounded-full h-2.5 dark:bg-gray-700">
-                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ player.stats.phy }}%"></div>
-                    </div>
-                    <div class="flex justify-center pt-2">
-                        <span class="w-full text-lg">
-                            Jumping
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.jumping }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Stamina
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.stamina }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Strength
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.strength }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Aggression
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.aggression }}
-                        </span>
-                    </div>
-                    <div class="flex justify-center">
-                        <span class="w-full text-lg">
-                            Sliding Tackle
-                        </span>
-                        <span class="flex flex-col items-end text-lg">
-                            {{ player.stats.slidingTackle }}
+                            {% endif %}
                         </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</form>
 
 {% endblock content %}
