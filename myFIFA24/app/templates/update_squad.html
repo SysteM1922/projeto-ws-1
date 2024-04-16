@@ -8,46 +8,58 @@
     <div class="formation-container"
         style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin: 0 auto; width: 80%;">
         <!-- Goalkeeper -->
-        <div class="player-rectangle goalkeeper"
-            style="width: 100px; height: 120px; background-color: #f00; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto;"
-            data-player-id="{{ squad.goalkeeper.id }}" data-player-pos="1">
-            GK<button class="delete-button">X</button>
-        </div>
-        <!-- Defenders -->
-        <div class="defenders-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
-            {% for defender in squad.defenders %}
-            <div class="player-rectangle defender"
-                style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;"
-                data-player-id="{{ defender.id }}" data-player-pos="{{ forloop.counter }}">
-                D{{ forloop.counter }}<button class="delete-button">X</button>
+<div class="goalkeeper-row" style="display: flex; justify-content: center; width: 100%;">
+    {% for player in squad.players %}
+        {% if player.pos == '1' %}
+            <div class="player-rectangle goalkeeper"
+                style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto; position: relative;"
+                data-player-id="{{ player.id }}" data-player-pos="{{ player.pos }}">
+                <button class="delete-button" onclick="removeShieldAndChangeColor(this.parentElement)" style="position: absolute; top: 3px; right: 3px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
             </div>
-            {% endfor %}
-        </div>
-        <!-- Midfielders -->
-        <div class="midfielders-row" style="display: flex; justify-content: center; width: 100%; gap: 140px">
-            {% for midfielder in squad.midfielders %}
-            <div class="player-rectangle midfielder"
-                style="width: 100px; height: 120px; background-color: #00f; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;"
-                data-player-id="{{ midfielder.id }}" data-player-pos="{{ forloop.counter }}">
-                M{{ forloop.counter }}<button class="delete-button">X</button>
-            </div>
-            {% endfor %}
-        </div>
-        <!-- Forwards -->
-        <div class="forwards-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
-            {% for forward in squad.forwards %}
-            <div class="player-rectangle forward"
-                style="width: 100px; height: 120px; background-color: #ff0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;"
-                data-player-id="{{ forward.id }}" data-player-pos="{{ forloop.counter }}">
-                F{{ forloop.counter }}<button class="delete-button">X</button>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+        {% endif %}
+    {% endfor %}
 </div>
+<!-- Defenders -->
+<div class="defenders-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+    {% for player in squad.players %}
+        {% if player.pos|slice:":1" == '2' or player.pos|slice:":1" == '3' or player.pos|slice:":1" == '4' or player.pos|slice:":1" == '5' %}
+            <div class="player-rectangle defender"
+                style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                data-player-id="{{ player.id }}" data-player-pos="{{ player.pos }}">
+                <button class="delete-button" onclick="removeShieldAndChangeColor(this.parentElement)" style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<!-- Midfielders -->
+<div class="midfielders-row" style="display: flex; justify-content: center; width: 100%; gap: 140px">
+    {% for player in squad.players %}
+        {% if player.pos|slice:":1" == '6' or player.pos|slice:":1" == '7' or player.pos|slice:":1" == '8' %}
+            <div class="player-rectangle midfielder"
+                style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                data-player-id="{{ player.id }}" data-player-pos="{{ player.pos }}">
+                <button class="delete-button" onclick="removeShieldAndChangeColor(this.parentElement)" style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+<!-- Forwards -->
+<div class="forwards-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+    {% for player in squad.players %}
+        {% if player.pos|slice:":1" == '9' or player.pos|slice:":1" == '10' or player.pos|slice:":1" == '11' %}
+            <div class="player-rectangle forward"
+                style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                data-player-id="{{ player.id }}" data-player-pos="{{ player.pos }}">
+                <button class="delete-button" onclick="removeShieldAndChangeColor(this.parentElement)" style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+
 <div class="save-squad-section text-center">
-    <input type="text" id="squadName" placeholder="Enter squad name" value="{{ squad.name }}" />
-    <button class="success" id="saveSquadButton" disabled>Save Squad</button>
+    <button class="success" id="saveSquadButton">Update Squad</button>
 </div>
 <!-- Modal Overlay -->
 <div id="playerModalOverlay" class="modal-overlay">
@@ -57,7 +69,7 @@
         <button id="closeModal" class="close-button">&times;</button>
         <div id="searchResults"></div>
         <!-- Input field for player name -->
-        <form id="playerForm">
+        <form id="playerForm2">
             <input type="text" id="name" name="name" placeholder="Enter player name" />
             <button type="submit">Search for Player</button>
         </form>
@@ -134,7 +146,7 @@
         /* Hidden by default */
         position: fixed;
         /* Stay in place */
-        z-index: 1;
+        z-index: 10;
         /* Sit on top */
         left: 0;
         top: 0;
@@ -256,11 +268,22 @@
     // Variable to store the clicked box
     let clickedBox = null;
 
-    // When the user clicks on a player box, open the modal overlay
-    document.querySelectorAll(".player-rectangle").forEach(function (box) {
-        box.onclick = function () {
+    function removeShieldAndChangeColor(playerBox) {
+        // Remove the background image
+        playerBox.style.backgroundImage = "none";
+        // Change the background color to a static color, e.g., light gray
+        playerBox.style.backgroundColor = "#d3d3d3";
+        // Make the box clickable again for adding players
+        playerBox.onclick = function() {
             modalOverlay.style.display = "block";
-            clickedBox = box; // Set the clicked box
+            clickedBox = playerBox; // Set the clicked box
+        };
+     }
+
+      // Add the onclick event to the "X" buttons
+    document.querySelectorAll(".delete-button").forEach(function (button) {
+        button.onclick = function () {
+        removeShieldAndChangeColor(this.parentElement);
         };
     });
 
@@ -273,12 +296,44 @@
     // When the user clicks anywhere outside of the modal content, close it
     window.onclick = function (event) {
         if (event.target == modalOverlay) {
-            modalOverlay.style.display = "none";
-            resetModal(); // Reset the modal
+        modalOverlay.style.display = "none";
+        resetModal(); // Reset the modal
         }
     };
 
+
+    // Example function to update the background of a box
+    function updateBoxBackground(box, shieldUrl) {
+        box.style.backgroundImage = `url(${shieldUrl})`;
+        box.style.backgroundSize = 'contain';
+        box.style.backgroundRepeat = 'no-repeat';
+        // Remove the background color
+        box.style.backgroundColor = "transparent";
+        // Remove any text content
+        box.textContent = "";
+    }
+
+    
+
+    // When the user clicks on a player box, open the modal overlay
+    document.querySelectorAll(".player-rectangle").forEach(function (box) {
+        box.onclick = function () {
+            modalOverlay.style.display = "block";
+            clickedBox = box; // Set the clicked box
+        };
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // Your existing code here
+        document.getElementById("playerForm2").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the form from submitting
+            var query = document.getElementById("name").value; // Get the search query from the input field
+            searchPlayers(query); // Call the searchPlayers function with the query
+        });
+    });
+    
     function searchPlayers(query) {
+        console.log("Searching for players with name:", query);
         fetch("/search-players/", {
             method: "POST",
             headers: {
@@ -332,6 +387,10 @@
             .catch((error) => console.error("Error:", error));
     }
 
+    function handleDeleteButtonClick() {
+        removeShieldAndChangeColor(this.parentElement);
+    }
+
     function updateBox(id, shieldUrl) {
         if (clickedBox) {
             // Set the background image of the clicked box
@@ -348,33 +407,37 @@
             clickedBox.style.backgroundColor = "transparent";
             // Remove any text content
             clickedBox.textContent = "";
+
+            // Check if the "X" button already exists
+            let deleteButton = clickedBox.querySelector(".delete-button");
+            if (!deleteButton) {
+                // If the "X" button does not exist, add it back
+                deleteButton = document.createElement("button");
+                deleteButton.className = "delete-button";
+                deleteButton.textContent = "X";
+                deleteButton.onclick = handleDeleteButtonClick;
+                clickedBox.appendChild(deleteButton);
+            }
+
             // Close the modal
             modalOverlay.style.display = "none";
             // Reset the modal
             resetModal();
             // Reset the clicked box
             clickedBox = null;
-
-            // Dynamically add the delete button after setting the shield
-            const deleteButton = document.createElement("button");
-            deleteButton.className = "delete-button";
-            deleteButton.textContent = "X";
-            deleteButton.onclick = function () {
-                // Reset the background image and text content of the corresponding box
-                this.parentElement.style.backgroundImage = "none";
-                this.parentElement.textContent = "";
-                // Optionally, reset the background color if needed
-                this.parentElement.style.backgroundColor = "initial";
-                // Remove the delete button itself
-                this.parentElement.removeChild(this);
-            };
-            clickedBox.appendChild(deleteButton); // Ensure this line is executed after setting the shield
         }
     }
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("playerForm2").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the form from submitting
+            var query = document.getElementById("name").value; // Get the search query from the input field
+            searchPlayers(query); // Call the searchPlayers function with the query
+        });
+    });
 
     // Prevent form submission and call searchPlayers
     document
-        .getElementById("playerForm")
+        .getElementById("playerForm2")
         .addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent the form from submitting
             var query = document.getElementById("name").value; // Get the search query from the input field

@@ -54,7 +54,7 @@ def get_squad_by_guid(guid: str) -> dict:
 
     return sorted(squad["players"], key=lambda x: x["pos"])
 
-def create_squad(user_id: str, squad: dict) -> dict:
+''' def create_squad(user_id: str, squad: dict) -> dict:
 
     status = ask(f"ASK {{ f<http://fifa24/squad/guid/{squad["id"]}> ?p ?o }}")
 
@@ -143,7 +143,7 @@ def update_squad(guid: str, squad: dict) -> dict:
         if ask(f"ASK {{ <{player["squadPlayerId"]}> fifaspp:player <{player["id"]}> }}"):
             return False
         
-    return True    
+    return True  '''   
 
 def delete_squad(guid: str) -> dict:
     query = f"""
