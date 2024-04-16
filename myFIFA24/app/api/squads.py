@@ -1,4 +1,4 @@
-from utils import select, update, ask
+from .utils import select, update, ask
 
 def get_squads_by_user_id(user_id: str) -> list[dict]:
     query = f"""
