@@ -2,12 +2,17 @@ from django.shortcuts import render, redirect
 from .api import leagues as leagues_api
 from .api import teams as teams_api
 from .api import players as players_api 
+from .api import squads as squads_api
 from django.contrib.auth.decorators import login_required
 from django.contrib import auth
 from django.contrib import messages
 from django.contrib.auth.models import User
 from .models import Profile
 # Create your views here.
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+import json
 
 @login_required(login_url='login')
 def index(request):
@@ -163,6 +168,67 @@ def player_view(request, guid):
     player = players_api.get_player_by_guid(guid)
     return render(request, 'player.html', {'player': player})
 
+@require_POST
+def search_players(request):
+    name = request.POST.get('name', '')
+
+    props = []
+
+    if name:
+        props.append({"prop": "name", "value": name})
+
+    players = players_api.get_players_base_info_by_name(name=name)
+    
+    #print("players:", players)
+    
+    results = []
+
+    for player in players:
+        results.append({
+            "id": player["playerid"],
+            "name": player["name"],
+            "shield": player["shield"],
+            })
+
+    # print("results:", results)
+
+    return JsonResponse(results, safe=False)
+
+
+
 @login_required(login_url='login')
 def squad_view(request):
     return render(request, 'squad.html')
+
+@login_required(login_url='login')
+def save_squad(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            squad_name = data['name']
+            user_id = request.user.id
+            formation = data['formation']
+            players = data['players']
+
+            # Fetch the user profile by user ID
+            user = User.objects.get(id=user_id)
+            # Assuming you have a one-to-one relationship with a UserProfile model
+            # and it has a squad_id attribute
+            squad_id = user.profile.last_squad_id
+
+            print(f"Squad Name: {squad_name}, ID: {squad_id}, Formation: {formation}, Players: {players}")
+
+            result = squads_api.create_squad(user_id, squad={"id":squad_id, "name": squad_name, "formation": formation, "players": players})
+
+            if result:
+                user.profile.last_squad_id += 1
+                user.profile.save()
+                JsonResponse({'status': 'success', 'message': 'Squad saved successfully'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Squad already exists'})
+        except User.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'User not found'})
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
