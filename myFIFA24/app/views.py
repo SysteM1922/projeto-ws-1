@@ -324,3 +324,36 @@ def game_view(request):
     last_stat = stat
 
     return render(request, 'game.html', {'player': player, 'stat': stat, "value": ""})
+
+
+@login_required(login_url='login')  
+def update_squad(request, squad_id):
+    if request.method == 'POST':
+        try:
+            # Parse the JSON data from the request body
+            data = json.loads(request.body)
+            squad_id = data.get('squadId')
+            squad_name = data.get('squadName')
+            squad_formation = data.get('squadFormation')
+            player_ids = data.get('playerIds')
+
+            # Construct the squad object
+            squad = {
+                'id': squad_id,
+                'name': squad_name,
+                'formation': squad_formation,
+                'players': [{'id': player_id} for player_id in player_ids],
+            }
+
+            # Call the update_squad function
+            result = update_squad(squad_id, squad)
+
+            # Return a JSON response based on the result
+            if result:
+                return JsonResponse({'status': 'success', 'message': 'Squad saved successfully.'})
+            else:
+                return JsonResponse({'status': 'error', 'message': 'Failed to save squad.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Invalid request method.'}, status=405)

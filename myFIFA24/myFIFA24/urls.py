@@ -37,4 +37,5 @@ urlpatterns = [
     #path('squads/<str:user_id>/delete/<str:squad_id>/', views.delete_squad, name='delete_squad'),
     path('squad/update/<str:squad_id>/', views.update_squad, name='update_squad'),
     path('game/', views.game_view, name='game'),
+    path('update-squad/<int:squad_id>/', views.update_squad, name='update-squad'),
 ]

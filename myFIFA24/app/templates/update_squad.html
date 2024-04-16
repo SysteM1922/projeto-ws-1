@@ -9,7 +9,8 @@
         style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin: 0 auto; width: 80%;">
         <!-- Goalkeeper -->
         <!-- print the squad name -->
-        <input type="text" id="squadName" name="squadName" value="{{ squad.name }}" disabled />
+        <input class="text-center" type="text" id="squadName" name="squadName" value="{{ squad.name }}" disabled />
+        <input type="hidden" id="squadFormation" name="squadFormation" value="{{ squad.formation }}" />
 <div class="goalkeeper-row" style="display: flex; justify-content: center; width: 100%;">
     {% for player in squad.players %}
         {% if player.pos == '1' %}
@@ -472,14 +473,23 @@
         });
         // the squad name is the value rendered in the template -> squad.name
         const squadName = document.getElementById("squadName").value;
-        fetch("/save-squad/", {
+        const squadFormation = document.getElementById("squadFormation").value;
+        // console.log("Squad Name:", squadName);
+        // console.log("Squad Formation:", squadFormation);
+        // GET ID from url
+        const squadId = window.location.pathname.split("/")[3];
+        // console.log("Squad ID:", squadId);
+        console.log("Player IDs:", playerIds);
+        fetch("/update-squad/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": "{{ csrf_token }}",
             },
             body: JSON.stringify({
+                squadId: squadId,   
                 squadName: squadName,
+                squadFormation: squadFormation,
                 playerIds: playerIds,
             }),
         })
