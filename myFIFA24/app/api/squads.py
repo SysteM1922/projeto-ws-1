@@ -46,8 +46,8 @@ def get_squad_by_guid(guid: str) -> dict:
 
     for player in result:
         squad["players"].append({
-            "id": player["playerId"],
-            "squadPlayerId": player["squadPlayerId"],
+            "id": player["playerId"].split("/")[-1],
+            "squadPlayerId": player["squadPlayerId"].split("/")[-1],
             "shield": player["playerShield"],
             "pos": player["playerPos"]
         })

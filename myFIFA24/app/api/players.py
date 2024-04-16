@@ -307,20 +307,17 @@ def get_player_by_guid(guid: str) -> dict:
         PREFIX fifapop: <http://fifa24/position/pred/>
         PREFIX fifagp: <http://fifa24/gender/pred/>
 
-        SELECT ?playerid ?name ?nationality ?flag ?teamid ?team ?teamName ?position ?ovr ?gender ?card ?birth ?height ?weight ?skills ?weakfoot ?foot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
+        SELECT ?playerid ?name ?nationality ?flag ?teamid ?team ?teamName ?gender ?card ?birth ?height ?weight ?skills ?weakfoot ?foot ?attwr ?defwr (CONCAT("{{",GROUP_CONCAT(?stat; separator=", "), "}}") AS ?stats)
         WHERE {{
             ?playerid fifaplp:gender ?genderid .
             FILTER(?playerid = fifaplg:{guid})
             ?genderid fifagp:label ?gender .
-            ?playerid fifaplp:position ?positionid .
-            ?positionid fifapop:shortLabel ?position .
             ?playerid fifaplp:nationality ?nationalityid .
             ?nationalityid fifanp:label ?nationality .
             ?nationalityid fifanp:imageUrl ?flag .
             ?playerid fifaplp:team ?teamid .
             ?teamid fifatp:imageUrl ?team .
             ?teamid fifatp:label ?teamName .
-            ?playerid fifaplp:overallRating ?ovr .
             ?playerid fifaplp:firstName ?fName .
             ?playerid fifaplp:lastName ?lName .
             OPTIONAL {{ ?playerid fifaplp:commonName ?cName . }}
@@ -336,7 +333,7 @@ def get_player_by_guid(guid: str) -> dict:
             ?playerid fifaplp:defensiveWorkRate ?defwr .
             ?playerid fifaplp:stat ?stat .
         }}
-        GROUP BY ?playerid ?name ?nationality ?flag ?teamid ?team ?teamName ?position ?ovr ?gender ?card ?birth ?height ?weight ?skills ?weakfoot ?foot ?attwr ?defwr
+        GROUP BY ?playerid ?name ?nationality ?flag ?teamid ?team ?teamName ?gender ?card ?birth ?height ?weight ?skills ?weakfoot ?foot ?attwr ?defwr
         """
 
     result = select(query)
