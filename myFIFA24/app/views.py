@@ -233,47 +233,30 @@ def save_squad(request):
     else:
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
     
+@login_required(login_url='login')
+def delete_squad(request, guid):
+    squad = squads_api.delete_squad(guid)
+
+    if squad:
+        redirect('squads')
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Failed to delete squad'}, status=400)
+    
 @login_required(login_url='login')  
 def squads_by_user(request):
-    # squads = squads_api.get_squads_by_user_id(request.user.id)
+    squads = squads_api.get_squads_by_user_id(request.user.id)
     # mock squads
-    squads = [{
+    """squads = [{
         "squadId": 1,
         "name": f"Squad {1}",
         "formation": "4-3-3",
-        "players": [{'id': 'http://fifa24/player/guid/20801', 'pos': '1', 'shield':'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '2'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '3'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '4'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '5'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '6'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '7'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '8'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '9'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '10'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '11'}]
-    }]
-
-    players = [
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '1', 'shield':'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '2'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '3'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '4'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '5'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '6'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '7'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '8'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '9'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '10'}, 
-        {'id': 'http://fifa24/player/guid/20801', 'pos': '11'}
-    ]
-
-    # Extract the 'shield' attribute from the first player
-    first_shield = players[0]['shield']
-
-    # Iterate over the list starting from the second element
-    for i in range(1, len(players)):
-        # Update each player dictionary with the 'shield' attribute from the first player
-        players[i]['shield'] = first_shield
-
-    squads[0]["players"] = players
-    # print("players:", players)
-    return render(request, 'squads.html', {'squads': squads, 'user_id': request.user.id})
+    }]"""
+    return render(request, 'squads.html', {'squads': squads})
 
 
 @login_required(login_url='login')
 def update_squad(request, squad_id):
-    # squad = squads_api.get_squad_by_guid(squad_id)
+    squad = squads_api.get_squad_by_guid(squad_id)
     # this will return the players list with the shield attribute
 
     squad = {

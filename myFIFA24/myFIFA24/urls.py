@@ -33,6 +33,7 @@ urlpatterns = [
     path('squad/', views.squad_view, name='squad'),
     path('search-players/', views.search_players, name='search_players'),
     path('save-squad/', views.save_squad, name='save_squad'),
+    path('delete-squad/<str:guid>/', views.delete_squad, name='delete_squad'),
     path('squads/', views.squads_by_user, name='squads'),
     #path('squads/<str:user_id>/delete/<str:squad_id>/', views.delete_squad, name='delete_squad'),
     path('squad/update/<str:squad_id>/', views.update_squad, name='update_squad'),
