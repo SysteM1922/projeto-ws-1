@@ -1,425 +1,458 @@
 {% extends "_base.html" %}
+
 {% block content %}
+
 {% include "navbar.html" %}
-{% load static %}
 
 <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
- <div class="formation-container" style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin: 0 auto; width: 80%;">
-    <!-- Goalkeeper -->
-    <div class="player-rectangle goalkeeper" style="width: 100px; height: 120px; background-color: #f00; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto;" data-player-id="{{ squad.goalkeeper.id }}" data-player-pos="1">
-      GK<button class="delete-button">X</button>
+    <div class="formation-container"
+        style="display: flex; flex-direction: column; align-items: center; gap: 40px; margin: 0 auto; width: 80%;">
+        <!-- Goalkeeper -->
+        <div class="player-rectangle goalkeeper"
+            style="width: 100px; height: 120px; background-color: #f00; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto;"
+            data-player-id="{{ squad.goalkeeper.id }}" data-player-pos="1">
+            GK<button class="delete-button">X</button>
+        </div>
+        <!-- Defenders -->
+        <div class="defenders-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+            {% for defender in squad.defenders %}
+            <div class="player-rectangle defender"
+                style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;"
+                data-player-id="{{ defender.id }}" data-player-pos="{{ forloop.counter }}">
+                D{{ forloop.counter }}<button class="delete-button">X</button>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Midfielders -->
+        <div class="midfielders-row" style="display: flex; justify-content: center; width: 100%; gap: 140px">
+            {% for midfielder in squad.midfielders %}
+            <div class="player-rectangle midfielder"
+                style="width: 100px; height: 120px; background-color: #00f; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;"
+                data-player-id="{{ midfielder.id }}" data-player-pos="{{ forloop.counter }}">
+                M{{ forloop.counter }}<button class="delete-button">X</button>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- Forwards -->
+        <div class="forwards-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+            {% for forward in squad.forwards %}
+            <div class="player-rectangle forward"
+                style="width: 100px; height: 120px; background-color: #ff0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;"
+                data-player-id="{{ forward.id }}" data-player-pos="{{ forloop.counter }}">
+                F{{ forloop.counter }}<button class="delete-button">X</button>
+            </div>
+            {% endfor %}
+        </div>
     </div>
-    <!-- Defenders -->
-    <div class="defenders-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
-      {% for defender in squad.defenders %}
-      <div class="player-rectangle defender" style="width: 100px; height: 120px; background-color: #0f0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;" data-player-id="{{ defender.id }}" data-player-pos="{{ forloop.counter }}">
-        D{{ forloop.counter }}<button class="delete-button">X</button>
-      </div>
-      {% endfor %}
-    </div>
-    <!-- Midfielders -->
-    <div class="midfielders-row" style="display: flex; justify-content: center; width: 100%; gap: 140px">
-      {% for midfielder in squad.midfielders %}
-      <div class="player-rectangle midfielder" style="width: 100px; height: 120px; background-color: #00f; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;" data-player-id="{{ midfielder.id }}" data-player-pos="{{ forloop.counter }}">
-        M{{ forloop.counter }}<button class="delete-button">X</button>
-      </div>
-      {% endfor %}
-    </div>
-    <!-- Forwards -->
-    <div class="forwards-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
-      {% for forward in squad.forwards %}
-      <div class="player-rectangle forward" style="width: 100px; height: 120px; background-color: #ff0; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px;" data-player-id="{{ forward.id }}" data-player-pos="{{ forloop.counter }}">
-        F{{ forloop.counter }}<button class="delete-button">X</button>
-      </div>
-      {% endfor %}
-    </div>
- </div>
 </div>
 <div class="save-squad-section text-center">
- <input type="text" id="squadName" placeholder="Enter squad name" value="{{ squad.name }}" />
- <button class="success" id="saveSquadButton" disabled>Save Squad</button>
+    <input type="text" id="squadName" placeholder="Enter squad name" value="{{ squad.name }}" />
+    <button class="success" id="saveSquadButton" disabled>Save Squad</button>
 </div>
 <!-- Modal Overlay -->
 <div id="playerModalOverlay" class="modal-overlay">
- <div class="modal-content">
-    <h2>Search for a Player</h2>
-    <!-- Close Button Inside Modal -->
-    <button id="closeModal" class="close-button">&times;</button>
-    <div id="searchResults"></div>
-    <!-- Input field for player name -->
-    <form id="playerForm">
-      <input type="text" id="name" name="name" placeholder="Enter player name" />
-      <button type="submit">Search for Player</button>
-    </form>
-    <!-- Area for search results -->
-    <div id="searchResults"></div>
- </div>
+    <div class="modal-content">
+        <h2>Search for a Player</h2>
+        <!-- Close Button Inside Modal -->
+        <button id="closeModal" class="close-button">&times;</button>
+        <div id="searchResults"></div>
+        <!-- Input field for player name -->
+        <form id="playerForm">
+            <input type="text" id="name" name="name" placeholder="Enter player name" />
+            <button type="submit">Search for Player</button>
+        </form>
+        <!-- Area for search results -->
+        <div id="searchResults"></div>
+    </div>
 </div>
 
 <style>
     .save-squad-section {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 10px;
-      margin-left: auto; /* Push to the right */
-      margin-right: 100px; /* Add some space on the right */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 10px;
+        margin-left: auto;
+        /* Push to the right */
+        margin-right: 100px;
+        /* Add some space on the right */
     }
-  
+
     #squadName {
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      width: 200px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 200px;
     }
-  
+
     #saveSquadButton {
-      padding: 8px 16px;
-      border: none;
-      background-color: #4caf50;
-      color: white;
-      cursor: pointer;
-      border-radius: 4px;
-      margin-bottom: 20px;
+        padding: 8px 16px;
+        border: none;
+        background-color: #4caf50;
+        color: white;
+        cursor: pointer;
+        border-radius: 4px;
+        margin-bottom: 20px;
     }
-  
+
     #saveSquadButton:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
+        background-color: #ccc;
+        cursor: not-allowed;
     }
+
     .delete-button {
-      position: absolute;
-      top: 5px; /* Adjust as needed */
-      right: 5px; /* Adjust as needed */
-      background-color: transparent;
-      border: none;
-      font-size: 16px;
-      cursor: pointer;
-      z-index: 10; /* Ensure it's on top */
+        position: absolute;
+        top: 5px;
+        /* Adjust as needed */
+        right: 5px;
+        /* Adjust as needed */
+        background-color: transparent;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        z-index: 10;
+        /* Ensure it's on top */
     }
-  
+
     .player-rectangle {
-      position: relative; /* Add this line */
-      width: 100px;
-      height: 120px;
-      border-radius: 10px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: #fff;
-      font-size: 18px;
-      margin: 0 auto;
+        position: relative;
+        /* Add this line */
+        width: 100px;
+        height: 120px;
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        font-size: 18px;
+        margin: 0 auto;
     }
-  
+
     /* Modal Overlay */
     .modal-overlay {
-      display: none; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1; /* Sit on top */
-      left: 0;
-      top: 0;
-      width: 100%; /* Full width */
-      height: 100%; /* Full height */
-      overflow: auto; /* Enable scroll if needed */
-      background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
     }
-  
+
     /* Modal Content */
     .modal-content {
-      position: relative; /* Allows absolute positioning of child elements */
-      background-color: #fefefe;
-      margin: 15% auto; /* 15% from the top and centered */
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%; /* Could be more or less, depending on screen size */
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Add shadow for depth */
-      animation: modalopen 0.5s; /* Add animation for smooth appearance */
+        position: relative;
+        /* Allows absolute positioning of child elements */
+        background-color: #fefefe;
+        margin: 15% auto;
+        /* 15% from the top and centered */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        /* Could be more or less, depending on screen size */
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        /* Add shadow for depth */
+        animation: modalopen 0.5s;
+        /* Add animation for smooth appearance */
     }
-  
+
     /* Close Button */
     .close-button {
-      position: absolute; /* Position relative to the nearest positioned ancestor */
-      top: 10px; /* Adjust as needed */
-      right: 10px; /* Adjust as needed */
-      color: #aaa;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
+        position: absolute;
+        /* Position relative to the nearest positioned ancestor */
+        top: 10px;
+        /* Adjust as needed */
+        right: 10px;
+        /* Adjust as needed */
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
     }
-  
+
     .close-button:hover,
     .close-button:focus {
-      color: black;
-      text-decoration: none;
-      cursor: pointer;
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
     }
-  
+
     /* Input Field */
     input[type="text"] {
-      width: 100%;
-      padding: 12px 20px;
-      margin: 8px 0;
-      box-sizing: border-box;
-      border: 2px solid #ccc;
-      border-radius: 4px;
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        box-sizing: border-box;
+        border: 2px solid #ccc;
+        border-radius: 4px;
     }
-  
+
     /* Add Player Button */
     button[type="submit"] {
-      background-color: #4caf50;
-      color: white;
-      padding: 14px 20px;
-      margin: 8px 0;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-      border-radius: 4px;
+        background-color: #4caf50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
+        border-radius: 4px;
     }
-  
+
     button[type="submit"]:hover {
-      background-color: #45a049;
+        background-color: #45a049;
     }
+
     /* Modal Appearance Animation */
     @keyframes modalopen {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
     }
-  
+
     table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
     }
-  
+
     th,
     td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
     }
-  
+
     th {
-      background-color: #f2f2f2;
-      color: black;
+        background-color: #f2f2f2;
+        color: black;
     }
-  
+
     tr:hover {
-      background-color: #f5f5f5;
+        background-color: #f5f5f5;
     }
-  </style>
-  
-  <script>
+</style>
+
+<script>
     // Get the modal overlay
     var modalOverlay = document.getElementById("playerModalOverlay");
-  
+
     // Get the close button
     var closeModalButton = document.getElementById("closeModal");
-  
+
     // Variable to store the clicked box
     let clickedBox = null;
-  
+
     // When the user clicks on a player box, open the modal overlay
     document.querySelectorAll(".player-rectangle").forEach(function (box) {
-      box.onclick = function () {
-        modalOverlay.style.display = "block";
-        clickedBox = box; // Set the clicked box
-      };
+        box.onclick = function () {
+            modalOverlay.style.display = "block";
+            clickedBox = box; // Set the clicked box
+        };
     });
-  
+
     // When the user clicks on the close button, close the modal overlay
     closeModalButton.onclick = function () {
-      modalOverlay.style.display = "none";
-      resetModal(); // Reset the modal
-    };
-  
-    // When the user clicks anywhere outside of the modal content, close it
-    window.onclick = function (event) {
-      if (event.target == modalOverlay) {
         modalOverlay.style.display = "none";
         resetModal(); // Reset the modal
-      }
     };
-  
+
+    // When the user clicks anywhere outside of the modal content, close it
+    window.onclick = function (event) {
+        if (event.target == modalOverlay) {
+            modalOverlay.style.display = "none";
+            resetModal(); // Reset the modal
+        }
+    };
+
     function searchPlayers(query) {
-      fetch("/search-players/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-          "X-CSRFToken": "{{ csrf_token }}",
-        },
-        body: `name=${encodeURIComponent(query)}`,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          // Clear previous search results
-          document.getElementById("searchResults").innerHTML = "";
-  
-          // Create table
-          const table = document.createElement("table");
-          table.style.width = "100%";
-          table.style.borderCollapse = "collapse";
-  
-          // Create table header
-          const thead = document.createElement("thead");
-          const headerRow = document.createElement("tr");
-          const nameHeader = document.createElement("th");
-          nameHeader.textContent = "Name";
-          const shieldHeader = document.createElement("th");
-          shieldHeader.textContent = "Shield";
-          headerRow.appendChild(nameHeader);
-          headerRow.appendChild(shieldHeader);
-          thead.appendChild(headerRow);
-          table.appendChild(thead);
-  
-          // Create table body
-          const tbody = document.createElement("tbody");
-          data.forEach((player) => {
-            const row = document.createElement("tr");
-            row.onclick = function () {
-              updateBox(player.id, player.shield); // Call updateBox with the player's name and shield URL
-            };
-            const nameCell = document.createElement("td");
-            nameCell.textContent = player.name;
-            const shieldCell = document.createElement("td");
-            shieldCell.innerHTML = `<img src="${player.shield}" alt="Shield" width="50" height="50">`;
-            row.appendChild(nameCell);
-            row.appendChild(shieldCell);
-            tbody.appendChild(row);
-          });
-          table.appendChild(tbody);
-  
-          // Append table to searchResults
-          document.getElementById("searchResults").appendChild(table);
-        })
-        .catch((error) => console.error("Error:", error));
-    }
-  
-    function updateBox(id, shieldUrl) {
-      if (clickedBox) {
-        // Set the background image of the clicked box
-        clickedBox.style.backgroundImage = `url(${shieldUrl})`;
-        // Set the background size to cover the entire box
-        clickedBox.style.backgroundSize = "contain";
-        // Update the data-player-id attribute
-        clickedBox.setAttribute("data-player-id", id);
-        // Center the background image
-        clickedBox.style.backgroundPosition = "center";
-        // add no-repeat
-        clickedBox.style.backgroundRepeat = "no-repeat";
-        // Remove the background color
-        clickedBox.style.backgroundColor = "transparent";
-        // Remove any text content
-        clickedBox.textContent = "";
-        // Close the modal
-        modalOverlay.style.display = "none";
-        // Reset the modal
-        resetModal();
-        // Reset the clicked box
-        clickedBox = null;
-  
-        // Dynamically add the delete button after setting the shield
-        const deleteButton = document.createElement("button");
-        deleteButton.className = "delete-button";
-        deleteButton.textContent = "X";
-        deleteButton.onclick = function () {
-          // Reset the background image and text content of the corresponding box
-          this.parentElement.style.backgroundImage = "none";
-          this.parentElement.textContent = "";
-          // Optionally, reset the background color if needed
-          this.parentElement.style.backgroundColor = "initial";
-          // Remove the delete button itself
-          this.parentElement.removeChild(this);
-        };
-        clickedBox.appendChild(deleteButton); // Ensure this line is executed after setting the shield
-      }
-    }
-  
-    // Prevent form submission and call searchPlayers
-    document
-      .getElementById("playerForm")
-      .addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent the form from submitting
-        var query = document.getElementById("name").value; // Get the search query from the input field
-        searchPlayers(query); // Call the searchPlayers function with the query
-      });
-  
-    // Clear modal
-    function resetModal() {
-      document.getElementById("searchResults").innerHTML = "";
-      document.getElementById("name").value = "";
-    }
-  
-    document.querySelectorAll(".delete-button").forEach(function (button) {
-      button.onclick = function () {
-        // Reset the background image and text content of the corresponding box
-        this.parentElement.style.backgroundImage = "none";
-        this.parentElement.textContent = "";
-        // Optionally, reset the background color if needed
-        this.parentElement.style.backgroundColor = "initial";
-      };
-    });
-  
-    document.getElementById("squadName").addEventListener("input", function () {
-      const saveSquadButton = document.getElementById("saveSquadButton");
-      if (this.value.trim() !== "") {
-        saveSquadButton.disabled = false;
-      } else {
-        saveSquadButton.disabled = true;
-      }
-    });
-  
-    document
-      .getElementById("saveSquadButton")
-      .addEventListener("click", function () {
-        const squadName = document.getElementById("squadName").value;
-        // Implement your save functionality here
-        console.log(`Saving squad: ${squadName}`);
-        let alertShown = false;
-        let players = [];
-        document.querySelectorAll(".player-rectangle").forEach(function (box) {
-          let playerId = box.getAttribute("data-player-id");
-          // if any playerId is 1 then i cant save the squad
-          if (playerId === "1") {
-            if (!alertShown) {
-              alert("Please select a player for each position");
-            }
-            alertShown = true;
-            return;
-          }
-          let playerPos = box.getAttribute("data-player-pos");
-          players.push({ id: playerId, pos: playerPos });
-        });
-        if (!alertShown) {
-          let squad = {
-            name: squadName,
-            id: -1, // this is the user id -> that i should get by request.user.id
-            formation: "4-3-3",
-            players: players,
-          };
-  
-          // Send the squad data to your backend
-          fetch("/save-squad/", {
+        fetch("/search-players/", {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": "{{ csrf_token }}",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-CSRFToken": "{{ csrf_token }}",
             },
-            body: JSON.stringify(squad),
-          })
+            body: `name=${encodeURIComponent(query)}`,
+        })
             .then((response) => response.json())
             .then((data) => {
-              console.log("Success:", data);
+                // Clear previous search results
+                document.getElementById("searchResults").innerHTML = "";
+
+                // Create table
+                const table = document.createElement("table");
+                table.style.width = "100%";
+                table.style.borderCollapse = "collapse";
+
+                // Create table header
+                const thead = document.createElement("thead");
+                const headerRow = document.createElement("tr");
+                const nameHeader = document.createElement("th");
+                nameHeader.textContent = "Name";
+                const shieldHeader = document.createElement("th");
+                shieldHeader.textContent = "Shield";
+                headerRow.appendChild(nameHeader);
+                headerRow.appendChild(shieldHeader);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // Create table body
+                const tbody = document.createElement("tbody");
+                data.forEach((player) => {
+                    const row = document.createElement("tr");
+                    row.onclick = function () {
+                        updateBox(player.id, player.shield); // Call updateBox with the player's name and shield URL
+                    };
+                    const nameCell = document.createElement("td");
+                    nameCell.textContent = player.name;
+                    const shieldCell = document.createElement("td");
+                    shieldCell.innerHTML = `<img src="${player.shield}" alt="Shield" width="50" height="50">`;
+                    row.appendChild(nameCell);
+                    row.appendChild(shieldCell);
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+
+                // Append table to searchResults
+                document.getElementById("searchResults").appendChild(table);
             })
-            .catch((error) => {
-              console.error("Error:", error);
-            });
+            .catch((error) => console.error("Error:", error));
+    }
+
+    function updateBox(id, shieldUrl) {
+        if (clickedBox) {
+            // Set the background image of the clicked box
+            clickedBox.style.backgroundImage = `url(${shieldUrl})`;
+            // Set the background size to cover the entire box
+            clickedBox.style.backgroundSize = "contain";
+            // Update the data-player-id attribute
+            clickedBox.setAttribute("data-player-id", id);
+            // Center the background image
+            clickedBox.style.backgroundPosition = "center";
+            // add no-repeat
+            clickedBox.style.backgroundRepeat = "no-repeat";
+            // Remove the background color
+            clickedBox.style.backgroundColor = "transparent";
+            // Remove any text content
+            clickedBox.textContent = "";
+            // Close the modal
+            modalOverlay.style.display = "none";
+            // Reset the modal
+            resetModal();
+            // Reset the clicked box
+            clickedBox = null;
+
+            // Dynamically add the delete button after setting the shield
+            const deleteButton = document.createElement("button");
+            deleteButton.className = "delete-button";
+            deleteButton.textContent = "X";
+            deleteButton.onclick = function () {
+                // Reset the background image and text content of the corresponding box
+                this.parentElement.style.backgroundImage = "none";
+                this.parentElement.textContent = "";
+                // Optionally, reset the background color if needed
+                this.parentElement.style.backgroundColor = "initial";
+                // Remove the delete button itself
+                this.parentElement.removeChild(this);
+            };
+            clickedBox.appendChild(deleteButton); // Ensure this line is executed after setting the shield
         }
-      });
-  </script>
-  
-  {% endblock %}
-  
+    }
+
+    // Prevent form submission and call searchPlayers
+    document
+        .getElementById("playerForm")
+        .addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the form from submitting
+            var query = document.getElementById("name").value; // Get the search query from the input field
+            searchPlayers(query); // Call the searchPlayers function with the query
+        });
+
+    // Clear modal
+    function resetModal() {
+        document.getElementById("searchResults").innerHTML = "";
+        document.getElementById("name").value = "";
+    }
+
+    document.querySelectorAll(".delete-button").forEach(function (button) {
+        button.onclick = function () {
+            // Reset the background image and text content of the corresponding box
+            this.parentElement.style.backgroundImage = "none";
+            this.parentElement.textContent = "";
+            // Optionally, reset the background color if needed
+            this.parentElement.style.backgroundColor = "initial";
+        };
+    });
+
+    document.getElementById("squadName").addEventListener("input", function () {
+        const saveSquadButton = document.getElementById("saveSquadButton");
+        if (this.value.trim() !== "") {
+            saveSquadButton.disabled = false;
+        } else {
+            saveSquadButton.disabled = true;
+        }
+    });
+
+    document
+        .getElementById("saveSquadButton")
+        .addEventListener("click", function () {
+            const squadName = document.getElementById("squadName").value;
+            // Implement your save functionality here
+            console.log(`Saving squad: ${squadName}`);
+            let alertShown = false;
+            let players = [];
+            document.querySelectorAll(".player-rectangle").forEach(function (box) {
+                let playerId = box.getAttribute("data-player-id");
+                // if any playerId is 1 then i cant save the squad
+                if (playerId === "1") {
+                    if (!alertShown) {
+                        alert("Please select a player for each position");
+                    }
+                    alertShown = true;
+                    return;
+                }
+                let playerPos = box.getAttribute("data-player-pos");
+                players.push({ id: playerId, pos: playerPos });
+            });
+            if (!alertShown) {
+                let squad = {
+                    name: squadName,
+                    id: -1, // this is the user id -> that i should get by request.user.id
+                    formation: "4-3-3",
+                    players: players,
+                };
+
+                // Send the squad data to your backend
+                fetch("/save-squad/", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: JSON.stringify(squad),
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log("Success:", data);
+                    })
+                    .catch((error) => {
+                        console.error("Error:", error);
+                    });
+            }
+        });
+</script>
+
+{% endblock content %}

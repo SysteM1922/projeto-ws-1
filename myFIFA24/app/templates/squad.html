@@ -1,5 +1,5 @@
-{% extends "_base.html" %} {% block content %} {% include "navbar.html" %} 
-{% load static %}
+{% extends "_base.html" %} {% block content %} {% include "navbar.html" %} {%
+load static %}
 <div
   class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
 >
@@ -603,7 +603,7 @@
       if (!alertShown) {
         let squad = {
           name: squadName,
-          id: -1, // this is the user id -> that i should get by request.user.id
+          id: 1, // this is the user id -> that i should get by request.user.id
           formation: "4-3-3",
           players: players,
         };

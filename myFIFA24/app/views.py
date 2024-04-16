@@ -234,7 +234,7 @@ def save_squad(request):
         return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
     
 @login_required(login_url='login')  
-def squads_by_user(request, user_id):
+def squads_by_user(request):
     # squads = squads_api.get_squads_by_user_id(user_id)
     squads = []
     # mock squads
@@ -258,7 +258,7 @@ def squads_by_user(request, user_id):
         ]
     })
 
-    return render(request, 'squads.html', {'squads': squads, 'user_id': user_id})
+    return render(request, 'squads.html', {'squads': squads, 'user_id': request.user.id})
 
 
 @login_required(login_url='login')
