@@ -8,7 +8,6 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end;
-        gap: 10px;
         margin-left: auto;
         /* Push to the right */
         margin-right: 100px;
@@ -184,9 +183,9 @@
 </style>
 
 <div class="max-w-screen-xl flex items-center justify-between mx-auto">
-    <div class="formation-container py-10 object-contain mx-auto my-10 w-full " style="background-image: url('/static/src/OIG3.80UlrtEk.9P3nDAxXo.jpeg'); background-repeat: no-repeat; background-position: 10%;">
+    <div class="object-cover py-10 my-10 w-full rounded-3xl" style="background-image: url('/static/src/OIG3.80UlrtEk.9P3nDAxXo.jpeg'); background-repeat: no-repeat; background-position: 10%;">
         <!-- Goalkeeper -->
-        <div class="goalkeeper-row" style="display: flex; justify-content: center; width: 100%;">
+        <div class="goalkeeper-row w-full" style="display: flex; justify-content: center;">
             {% for player in squad.players %}
             {% if player.pos == '1' %}
             <div class="player-rectangle goalkeeper"
@@ -199,7 +198,7 @@
             {% endfor %}
         </div>
         <!-- Defenders -->
-        <div class="defenders-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+        <div class="defenders-row w-full" style="display: flex; justify-content: space-around;;">
             {% for player in squad.players %}
             {% if player.pos|slice:":1" == '2' or player.pos|slice:":1" == '3' or player.pos|slice:":1" == '4' or player.pos|slice:":1" == '5' %}
             <div class="player-rectangle defender"
@@ -212,7 +211,7 @@
             {% endfor %}
         </div>
         <!-- Midfielders -->
-        <div class="midfielders-row" style="display: flex; justify-content: center; width: 100%; gap: 140px">
+        <div class="midfielders-row w-full" style="display: flex; justify-content: center;">
             {% for player in squad.players %}
             {% if player.pos|slice:":1" == '6' or player.pos|slice:":1" == '7' or player.pos|slice:":1" == '8' %}
             <div class="player-rectangle midfielder"
@@ -225,7 +224,7 @@
             {% endfor %}
         </div>
         <!-- Forwards -->
-        <div class="forwards-row" style="display: flex; justify-content: space-around; width: 100%; gap: 10px;">
+        <div class="forwards-row w-full" style="display: flex; justify-content: space-around;">
             {% for player in squad.players %}
             {% if player.pos|slice:":1" == '9' or player.pos|slice:":1" == '10' or player.pos|slice:":1" == '11' %}
             <div class="player-rectangle forward"
@@ -238,7 +237,7 @@
             {% endfor %}
         </div>
     </div>
-    <div class="p-5">
+    <div class="p-5 flex flex-col">
         <select class="text-center w-full rounded-lg py-1" id="squadFormation" name="squadFormation">
             <option value="4-3-3">
                 4-3-3
@@ -364,7 +363,7 @@
                     const nameCell = document.createElement("td");
                     nameCell.textContent = player.name;
                     const shieldCell = document.createElement("td");
-                    shieldCell.innerHTML = `<img src="${player.shield}" alt="Shield" width="50" height="50">`;
+                    shieldCell.innerHTML = `<img src="${player.shield}" alt="Shield" height="50">`;
                     row.appendChild(nameCell);
                     row.appendChild(shieldCell);
                     tbody.appendChild(row);
