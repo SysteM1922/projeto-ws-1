@@ -238,12 +238,14 @@
             {% endfor %}
         </div>
     </div>
-    <div>
-        <input class="text-center" type="text" id="squadName" name="squadName" value="{{ squad.name }}" disabled />
-        <input type="hidden" id="squadFormation" name="squadFormation" value="{{ squad.formation }}" />
-        <div class="save-squad-section text-center">
-            <button class="success" id="saveSquadButton" onclick="updateSquad()">Save Squad</button>
-        </div>
+    <div class="p-5">
+        <select class="text-center w-full rounded-lg py-1" id="squadFormation" name="squadFormation">
+            <option value="4-3-3">
+                4-3-3
+            </option>
+        </select>
+        <input class="flex text-center w-full" type="text" id="squadName" name="squadName" value="{{ squad.name }}"/>
+        <button class="success w-full" id="saveSquadButton" onclick="updateSquad()">Save Squad</button>
     </div>
 </div>
 <!-- Modal Overlay -->
