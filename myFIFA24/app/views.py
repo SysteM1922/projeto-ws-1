@@ -135,7 +135,6 @@ def players_view(request):
         if nationality:
             props.append({"prop": "nationality", "value": nationality})
         if team:
-            print(team)
             props.append({"prop": "team", "value": team})
         if gender:
             props.append({"prop": "gender", "value": gender})
@@ -179,8 +178,6 @@ def search_players(request):
 
     players = players_api.get_players_base_info_by_name(name=name)
     
-    # print("players:", players)
-    
     results = []
 
     for player in players:
@@ -190,40 +187,36 @@ def search_players(request):
             "shield": player["shield"],
             })
 
-    # print("results:", results)
-
     return JsonResponse(results, safe=False)
 
-
-
 @login_required(login_url='login')
-def squad_view(request):
-    return render(request, 'squad.html')
+def create_squad(request):
 
-@login_required(login_url='login')
-def save_squad(request):
     if request.method == 'POST':
+
         try:
-            data = json.loads(request.body)
-            squad_name = data['name']
+            squad_name = request.POST.get('squadName')
             user_id = request.user.id
-            formation = data['formation']
-            players = data['players']
+            formation = request.POST.get('squadFormation')
+            players = []
+            for i in range(1, 12):
+                player_id = request.POST.get(str(i))
+                if player_id:
+                    players.append({"id": player_id.split("/")[-1], "pos": str(i)})
 
-            # Fetch the user profile by user ID
+            print("players:", players)
+
             user = User.objects.get(id=user_id)
-            # Assuming you have a one-to-one relationship with a UserProfile model
-            # and it has a squad_id attribute
-            squad_id = user.profile.last_squad_id
+            profile = Profile.objects.get(user=user)
 
-            print(f"Squad Name: {squad_name}, ID: {squad_id}, Formation: {formation}, Players: {players}")
+            squad_id = profile.last_squad_id + 1
 
-            result = squads_api.create_squad(user_id, squad={"id":squad_id, "name": squad_name, "formation": formation, "players": players})
+            result = squads_api.create_squad(user_id, squad={"id":str(squad_id), "name": squad_name, "formation": formation, "players": players})
 
             if result:
-                user.profile.last_squad_id += 1
-                user.profile.save()
-                JsonResponse({'status': 'success', 'message': 'Squad saved successfully'})
+                profile.last_squad_id += 1
+                profile.save()
+                return redirect(f'/squad/{squad_id}')
             else:
                 return JsonResponse({'status': 'error', 'message': 'Squad already exists'})
         except User.DoesNotExist:
@@ -231,43 +224,28 @@ def save_squad(request):
         except Exception as e:
             return JsonResponse({'status': 'error', 'message': str(e)})
     else:
-        return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+        return render(request, 'squad.html', {"create": True})
     
 @login_required(login_url='login')
 def delete_squad(request, guid):
     squad = squads_api.delete_squad(guid)
 
     if squad:
-        redirect('squads')
+        return redirect('squads')
     else:
         return JsonResponse({'status': 'error', 'message': 'Failed to delete squad'}, status=400)
     
 @login_required(login_url='login')  
 def squads_by_user(request):
     squads = squads_api.get_squads_by_user_id(request.user.id)
-    # mock squads
-    """squads = [{
-        "squadId": 1,
-        "name": f"Squad {1}",
-        "formation": "4-3-3",
-    }]"""
     return render(request, 'squads.html', {'squads': squads})
 
 
 @login_required(login_url='login')
 def update_squad(request, squad_id):
     squad = squads_api.get_squad_by_guid(squad_id)
-    # this will return the players list with the shield attribute
 
-    squad = {
-        "squadId": 1,
-        "name": f"Squad {1}",
-        "formation": "4-3-3",
-        "players": [{'id': 'http://fifa24/player/guid/20801', 'pos': '1', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '2', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '3', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '4', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '5', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '6', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '7', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '8', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '9', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '10', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}, {'id': 'http://fifa24/player/guid/20801', 'pos': '11', 'shield': 'https://media.contentapi.ea.com/content/dam/ea/easfc/fc-24/ratings/common/full/player-shields/en/20801.png'}]
-    }
-
-    # print("squad:", squad)
-    return render(request, 'update_squad.html', {'squad': squad})
+    return render(request, 'squad.html', {'squad': squad})
 
 last_player = None
 last_stat = None
@@ -282,8 +260,6 @@ def game_view(request):
 
     
     value = request.POST.get('value', None)
-
-    print(value)
 
     if request.method == 'POST':
 

@@ -6,14 +6,19 @@ def get_squads_by_user_id(user_id: str) -> list[dict]:
 
     SELECT ?squadId ?name ?formation
     WHERE {{
-        ?squad fifasqp:userId "{user_id}"^^xsd:string .
-        ?squad fifasqp:name ?name .
-        ?squad fifasqp:formation ?formation .
+        ?squadId fifasqp:userId "{user_id}"^^xsd:string .
+        ?squadId fifasqp:name ?name .
+        ?squadId fifasqp:formation ?formation .
     }}
     ORDER BY ?name
     """
 
-    return select(query)
+    result = select(query)
+
+    for squad in result:
+        squad["squadId"] = squad["squadId"].split("/")[-1]
+
+    return result
 
 def get_squad_by_guid(guid: str) -> dict:
     query = f"""
@@ -38,7 +43,7 @@ def get_squad_by_guid(guid: str) -> dict:
         return None
     
     squad = {
-        "id": guid,
+        "squadId": guid,
         "name": result[0]["name"],
         "formation": result[0]["formation"],
         "players": []
@@ -47,16 +52,15 @@ def get_squad_by_guid(guid: str) -> dict:
     for player in result:
         squad["players"].append({
             "id": player["playerId"].split("/")[-1],
-            "squadPlayerId": player["squadPlayerId"].split("/")[-1],
             "shield": player["playerShield"],
             "pos": player["playerPos"]
         })
 
     return sorted(squad["players"], key=lambda x: x["pos"])
 
-''' def create_squad(user_id: str, squad: dict) -> dict:
+def create_squad(user_id: str, squad: dict) -> dict:
 
-    status = ask(f"ASK {{ f<http://fifa24/squad/guid/{squad["id"]}> ?p ?o }}")
+    status = ask(f"ASK {{ <http://fifa24/squad/guid/{squad["id"]}> ?p ?o }}")
 
     if status:
         return False
@@ -143,21 +147,17 @@ def update_squad(guid: str, squad: dict) -> dict:
         if ask(f"ASK {{ <{player["squadPlayerId"]}> fifaspp:player <{player["id"]}> }}"):
             return False
         
-    return True  '''   
+    return True
 
 def delete_squad(guid: str) -> dict:
     query = f"""
     PREFIX fifasqg: <http://fifa24/squad/guid/>
-    PREFIX fifasqp: <http://fifa24/squad/pred/>
 
     DELETE {{
         fifasqg:{guid} ?p1 ?o1 .
-        ?squadPlayerId ?p2 ?o2 .
     }}
     WHERE {{
         fifasqg:{guid} ?p1 ?o1 .
-        fifasqg:{guid} fifasqp:player ?squadPlayerId .
-        ?squadPlayerId ?p2 ?o2 .
     }}
     """
 
