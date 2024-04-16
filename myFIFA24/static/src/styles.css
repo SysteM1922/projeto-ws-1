@@ -1143,10 +1143,6 @@ input:checked + .toggle-bg {
   margin: 0.5rem;
 }
 
-.m-auto {
-  margin: auto;
-}
-
 .mx-1 {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
@@ -1165,16 +1161,6 @@ input:checked + .toggle-bg {
 .my-10 {
   margin-top: 2.5rem;
   margin-bottom: 2.5rem;
-}
-
-.my-5 {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
-}
-
-.my-auto {
-  margin-top: auto;
-  margin-bottom: auto;
 }
 
 .mb-1 {
@@ -1217,16 +1203,12 @@ input:checked + .toggle-bg {
   margin-top: 2rem;
 }
 
-.mt-10 {
-  margin-top: 2.5rem;
+.ml-auto {
+  margin-left: auto;
 }
 
 .mr-auto {
   margin-right: auto;
-}
-
-.ml-auto {
-  margin-left: auto;
 }
 
 .block {
@@ -1309,10 +1291,6 @@ input:checked + .toggle-bg {
   height: 100vh;
 }
 
-.h-16 {
-  height: 4rem;
-}
-
 .w-1\/2 {
   width: 50%;
 }
@@ -1370,25 +1348,12 @@ input:checked + .toggle-bg {
   width: 100vw;
 }
 
-.w-2 {
-  width: 0.5rem;
-}
-
-.w-fit {
-  width: -moz-fit-content;
-  width: fit-content;
-}
-
 .max-w-screen-xl {
   max-width: 1280px;
 }
 
 .flex-1 {
   flex: 1 1 0%;
-}
-
-.flex-initial {
-  flex: 0 1 auto;
 }
 
 .flex-shrink {
@@ -1760,16 +1725,6 @@ input:checked + .toggle-bg {
      object-fit: cover;
 }
 
-.object-fill {
-  -o-object-fit: fill;
-     object-fit: fill;
-}
-
-.object-bottom {
-  -o-object-position: bottom;
-     object-position: bottom;
-}
-
 .p-0 {
   padding: 0px;
 }
@@ -1880,20 +1835,12 @@ input:checked + .toggle-bg {
   padding-top: 0.5rem;
 }
 
-.pt-10 {
-  padding-top: 2.5rem;
-}
-
 .text-center {
   text-align: center;
 }
 
 .text-right {
   text-align: right;
-}
-
-.text-start {
-  text-align: start;
 }
 
 .text-2xl {
@@ -1924,11 +1871,6 @@ input:checked + .toggle-bg {
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
-}
-
-.text-3xl {
-  font-size: 1.875rem;
-  line-height: 2.25rem;
 }
 
 .font-bold {

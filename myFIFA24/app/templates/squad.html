@@ -1,5 +1,5 @@
-{% extends "_base.html" %} {% block content %} {% include "navbar.html" %} {%
-load static %}
+{% extends "_base.html" %} {% block content %} {% include "navbar.html" %}
+
 <div
   class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4"
 >
@@ -32,7 +32,8 @@ load static %}
       data-player-id="1"
       data-player-pos="1"
     >
-      GK<button class="delete-button">X</button>
+      GK
+      <button class="delete-button hidden" id="deleteButton1">X</button>
     </div>
     <!-- Defenders -->
     <div
@@ -60,7 +61,8 @@ load static %}
         data-player-id="1"
         data-player-pos="2"
       >
-        D1<button class="delete-button">X</button>
+        D1
+        <button class="delete-button hidden" id="deleteButton2">X</button>
       </div>
       <div
         class="player-rectangle defender"
@@ -78,7 +80,8 @@ load static %}
         data-player-id="1"
         data-player-pos="3"
       >
-        D2<button class="delete-button">X</button>
+        D2
+        <button class="delete-button hidden" id="deleteButton3">X</button>
       </div>
       <div
         class="player-rectangle defender"
@@ -96,7 +99,8 @@ load static %}
         data-player-id="1"
         data-player-pos="4"
       >
-        D3<button class="delete-button">X</button>
+        D3
+        <button class="delete-button hidden" id="deleteButton4">X</button>
       </div>
       <div
         class="player-rectangle defender"
@@ -114,7 +118,8 @@ load static %}
         data-player-id="1"
         data-player-pos="5"
       >
-        D4<button class="delete-button">X</button>
+        D4
+        <button class="delete-button hidden" id="deleteButton5">X</button>
       </div>
     </div>
     <!-- Midfielders -->
@@ -138,7 +143,8 @@ load static %}
         data-player-id="1"
         data-player-pos="6"
       >
-        M1<button class="delete-button">X</button>
+        M1
+        <button class="delete-button hidden" id="deleteButton6">X</button>
       </div>
       <div
         class="player-rectangle midfielder"
@@ -156,7 +162,8 @@ load static %}
         data-player-id="1"
         data-player-pos="7"
       >
-        M2<button class="delete-button">X</button>
+        M2
+        <button class="delete-button hidden" id="deleteButton7">X</button>
       </div>
       <div
         class="player-rectangle midfielder"
@@ -174,7 +181,8 @@ load static %}
         data-player-id="1"
         data-player-pos="8"
       >
-        M3<button class="delete-button">X</button>
+        M3
+        <button class="delete-button hidden" id="deleteButton8">X</button>
       </div>
     </div>
     <!-- Forwards -->
@@ -203,7 +211,8 @@ load static %}
         data-player-id="1"
         data-player-pos="9"
       >
-        F1<button class="delete-button">X</button>
+        F1
+        <button class="delete-button hidden" id="deleteButton9">X</button>
       </div>
       <div
         class="player-rectangle forward"
@@ -221,7 +230,8 @@ load static %}
         data-player-id="1"
         data-player-pos="10"
       >
-        F2<button class="delete-button">X</button>
+        F2
+        <button class="delete-button hidden" id="deleteButton10">X</button>
       </div>
       <div
         class="player-rectangle forward"
@@ -239,7 +249,8 @@ load static %}
         data-player-id="1"
         data-player-pos="11"
       >
-        F3<button class="delete-button">X</button>
+        F3
+        <button class="delete-button hidden" id="deleteButton11">X</button>
       </div>
     </div>
   </div>
@@ -528,27 +539,26 @@ load static %}
       clickedBox.style.backgroundColor = "transparent";
       // Remove any text content
       clickedBox.textContent = "";
+
+      // Get the player position from the clicked box
+      var playerPos = clickedBox.getAttribute("data-player-pos");
+
+      // Construct the ID of the delete button based on playerPos
+      var deleteButtonId = "deleteButton" + playerPos;
+      // Select the delete button by its ID
+      var deleteButton = document.getElementById(deleteButtonId);
+      console.log(">> ",deleteButton);
+      if (deleteButton) {
+        // Remove the 'hidden' class to show the button
+        deleteButton.classList.remove("hidden");
+      }
+
       // Close the modal
       modalOverlay.style.display = "none";
       // Reset the modal
       resetModal();
       // Reset the clicked box
       clickedBox = null;
-
-      // Dynamically add the delete button after setting the shield
-      const deleteButton = document.createElement("button");
-      deleteButton.className = "delete-button";
-      deleteButton.textContent = "X";
-      deleteButton.onclick = function () {
-        // Reset the background image and text content of the corresponding box
-        this.parentElement.style.backgroundImage = "none";
-        this.parentElement.textContent = "";
-        // Optionally, reset the background color if needed
-        this.parentElement.style.backgroundColor = "initial";
-        // Remove the delete button itself
-        this.parentElement.removeChild(this);
-      };
-      clickedBox.appendChild(deleteButton); // Ensure this line is executed after setting the shield
     }
   }
 
