@@ -30,4 +30,6 @@ urlpatterns = [
     path('league/<str:guid>/', views.league_view, name='league'),
     path('team/<str:guid>/', views.team_view, name='team'),
     path('squad/', views.squad_view, name='squad'),
+    path('search-players/', views.search_players, name='search_players'),
+    path('save-squad/', views.save_squad, name='save_squad'),
 ]
