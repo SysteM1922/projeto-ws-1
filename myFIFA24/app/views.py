@@ -216,7 +216,7 @@ def create_squad(request):
             if result:
                 profile.last_squad_id += 1
                 profile.save()
-                return redirect(f'/squad/{squad_id}')
+                return redirect(f'/squads')
             else:
                 return JsonResponse({'status': 'error', 'message': 'Squad already exists'})
         except User.DoesNotExist:
@@ -245,7 +245,7 @@ def squads_by_user(request):
 def update_squad(request, squad_id):
     squad = squads_api.get_squad_by_guid(squad_id)
 
-    return render(request, 'squad.html', {'squad': squad})
+    return render(request, 'squad.html', {'squad': squad, "create": False})
 
 last_player = None
 last_stat = None

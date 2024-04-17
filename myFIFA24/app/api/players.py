@@ -207,8 +207,9 @@ def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> 
                     ?playerid fifaplp:nationality ?nationalityid .
                     ?nationalityid fifanp:imageUrl ?flag .
                     ?nationalityid fifanp:label ?nationality .
+                    ?teamid fifatp:label ?team .
                     ?playerid fifaplp:team ?teamid .
-                    ?teamid fifatp:imageUrl ?team .
+                    ?teamid fifatp:imageUrl ?logo .
                     ?playerid fifaplp:overallRating ?ovr .
                     ?playerid fifaplp:firstName ?fName .
                     ?playerid fifaplp:lastName ?lName .
@@ -218,6 +219,7 @@ def get_players_by_prop(start: int = 0, limit: int = 30, props: dict = None) -> 
                     ?playerid fifaplp:weakFootAbility ?weakfoot .
                     ?playerid fifaplp:attackingWorkRate ?attwr .
                     ?playerid fifaplp:defensiveWorkRate ?defwr .
+                    ?playerid fifaplp:avatarUrl ?image .
                     ?playerid fifaplp:stat ?stat .
                     }}"""
                 case "order":

@@ -152,12 +152,16 @@ def update_squad(guid: str, squad: dict) -> dict:
 def delete_squad(guid: str) -> dict:
     query = f"""
     PREFIX fifasqg: <http://fifa24/squad/guid/>
+    PREFIX fifasqp: <http://fifa24/squad/pred/>
 
     DELETE {{
         fifasqg:{guid} ?p1 ?o1 .
+        ?squadPlayerId ?p2 ?o2 .
     }}
     WHERE {{
         fifasqg:{guid} ?p1 ?o1 .
+        fifasqg:{guid} fifasqp:player ?squadPlayerId .
+        ?squadPlayerId ?p2 ?o2 .
     }}
     """
 

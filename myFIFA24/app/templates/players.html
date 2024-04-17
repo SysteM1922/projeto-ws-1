@@ -218,7 +218,7 @@
           <button id="last" class="text-white hover:text-gray-300">last &raquo;</button>
           <script>
             document.getElementById('last').addEventListener('click', function() {
-              document.getElementById('page').value = "{{ page_obj.paginator.num_pages }}";
+              document.getElementById('page').value = "{{ page_obj.num_pages }}";
             });
           </script>
           {% endif %}

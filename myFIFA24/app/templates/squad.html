@@ -187,97 +187,16 @@
     <div class="max-w-screen-xl flex items-center justify-between mx-auto">
         <div class="object-cover py-10 my-10 w-full rounded-3xl"
             style="background-image: url('/static/src/OIG3.80UlrtEk.9P3nDAxXo.jpeg'); background-repeat: no-repeat; background-position: 10%;">
-            <!-- Goalkeeper -->
-            <div class="goalkeeper-row w-full" style="display: flex; justify-content: center;">
-                {% if create %}
-                <div class="player-rectangle goalkeeper"
-                    style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto; position: relative;"
-                    data-player-position="1">
-                    <input type="hidden" id="1" name="1" value="" />
-                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
-                        style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
-                </div>
-                {% else %}
-                {% for player in squad.players %}
-                {% if player.pos == '1' %}
-                <div class="player-rectangle goalkeeper"
-                    style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto; position: relative;"
-                    data-player-position="1">
-                    <input type="hidden" id="1" name="1" value="" />
-                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
-                        style="position: absolute; top: 3px; right: 3px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
-                </div>
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-            </div>
-            <!-- Defenders -->
-            <div class="defenders-row w-full" style="display: flex; justify-content: space-around;;">
-                {% if create %}
-                {% for i in "2345" %}
-                <div class="player-rectangle defender"
-                    style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
-                    onclick="document.getElementById('playerModalOverlay').style.display = 'block'" data-player-position="{{ i }}">
-                    <input type="hidden" id="{{ i }}" name="1" value="" />
-                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
-                    style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
-                </div>
-                {% endfor %}
-                {% else %}
-                {% for player in squad.players %}
-                {% if player.pos|slice:":1" == '2' or player.pos|slice:":1" == '3' or player.pos|slice:":1" == '4' or player.pos|slice:":1" == '5' %}
-                <div class="player-rectangle defender"
-                    style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
-                    data-player-position="{{ player.pos|slice:':1' }}">
-                    <input type="hidden" id="{{ player.pos|slice:':1' }}" name="1" value="" />
-                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
-                        style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
-                </div>
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-            </div>
-            <!-- Midfielders -->
-            <div class="midfielders-row w-full" style="display: flex; justify-content: center;">
-                {% if create %}
-                <input type="hidden" id="6" name="6" value="" />
-                <input type="hidden" id="7" name="7" value="" />
-                <input type="hidden" id="8" name="8" value="" />
-                {% for i in "678" %}
-                <div class="player-rectangle midfielder"
-                    style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
-                    onclick="document.getElementById('playerModalOverlay').style.display = 'block'" data-player-position="{{ i }}">
-                    <input type="hidden" id="{{ i }}" name="1" value="" />
-                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
-                    style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
-                </div>
-                {% endfor %}
-                {% else %}
-                {% for player in squad.players %}
-                {% if player.pos|slice:":1" == '6' or player.pos|slice:":1" == '7' or player.pos|slice:":1" == '8' %}
-                <input type="hidden" id="{{ player.pos|slice:':1' }}" name="{{ player.pos|slice:':1' }}" value="" />
-                <div class="player-rectangle midfielder"
-                    style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
-                    data-player-position="{{ player.pos|slice:':1' }}">
-                    <input type="hidden" id="{{ player.pos|slice:':1' }}" name="1" value="" />
-                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
-                        style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
-                </div>
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-            </div>
             <!-- Forwards -->
             <div class="forwards-row w-full" style="display: flex; justify-content: space-around;">
-                {% if create %}
                 <input type="hidden" id="9" name="9" value="" />
                 <input type="hidden" id="10" name="10" value="" />
                 <input type="hidden" id="11" name="11" value="" />
+                {% if create %}
                 {% for i in "901" %}
                 <div class="player-rectangle forward"
                     style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
                     onclick="document.getElementById('playerModalOverlay').style.display = 'block'" data-player-position="{{ i|page }}">
-                    <input type="hidden" id="{{ i|page }}" name="1" value="" />
                     <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
                     style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
                 </div>
@@ -289,9 +208,87 @@
                 <div class="player-rectangle forward"
                     style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
                     data-player-position="{{ player.pos|slice:':1' }}">
-                    <input type="hidden" id="{{ player.pos|slice:':1' }}" name="1" value="" />
                     <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
                         style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <!-- Midfielders -->
+            <div class="midfielders-row w-full" style="display: flex; justify-content: center;">
+                <input type="hidden" id="6" name="6" value="" />
+                <input type="hidden" id="7" name="7" value="" />
+                <input type="hidden" id="8" name="8" value="" />
+                {% if create %}
+                {% for i in "678" %}
+                <div class="player-rectangle midfielder"
+                    style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                    onclick="document.getElementById('playerModalOverlay').style.display = 'block'" data-player-position="{{ i }}">
+                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
+                    style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
+                </div>
+                {% endfor %}
+                {% else %}
+                {% for player in squad.players %}
+                {% if player.pos|slice:":1" == '6' or player.pos|slice:":1" == '7' or player.pos|slice:":1" == '8' %}
+                <input type="hidden" id="{{ player.pos|slice:':1' }}" name="{{ player.pos|slice:':1' }}" value="" />
+                <div class="player-rectangle midfielder"
+                    style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                    data-player-position="{{ player.pos|slice:':1' }}">
+                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
+                        style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <!-- Defenders -->
+            <div class="defenders-row w-full" style="display: flex; justify-content: space-around;;">
+                <input type="hidden" id="2" name="2" value="" />
+                <input type="hidden" id="3" name="3" value="" />
+                <input type="hidden" id="4" name="4" value="" />
+                <input type="hidden" id="5" name="5" value="" />
+                {% if create %}
+                {% for i in "2345" %}
+                <div class="player-rectangle defender"
+                    style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                    onclick="document.getElementById('playerModalOverlay').style.display = 'block'" data-player-position="{{ i }}">
+                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
+                    style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
+                </div>
+                {% endfor %}
+                {% else %}
+                {% for player in squad.players %}
+                {% if player.pos|slice:":1" == '2' or player.pos|slice:":1" == '3' or player.pos|slice:":1" == '4' or player.pos|slice:":1" == '5' %}
+                <div class="player-rectangle defender"
+                    style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; position: relative;"
+                    data-player-position="{{ player.pos|slice:':1' }}">
+                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
+                        style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
+                </div>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </div>
+            <!-- Goalkeeper -->
+            <div class="goalkeeper-row w-full" style="display: flex; justify-content: center;">
+                <input type="hidden" id="1" name="1" value="" />
+                {% if create %}
+                <div class="player-rectangle goalkeeper"
+                    style="width: 100px; height: 120px; background-color: #d3d3d3; background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto; position: relative;"
+                    data-player-position="1">
+                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
+                        style="position: absolute; top: 5px; right: 5px; background-color: transparent; border: none; font-size: 16px; cursor: pointer; display: none;">X</button>
+                </div>
+                {% else %}
+                {% for player in squad.players %}
+                {% if player.pos == '1' %}
+                <div class="player-rectangle goalkeeper"
+                    style="width: 100px; height: 120px; background-image: url('{{ player.shield }}'); background-size: contain; background-repeat: no-repeat; border-radius: 10px; display: flex; justify-content: center; align-items: center; color: #fff; font-size: 18px; margin: 0 auto; position: relative;"
+                    data-player-position="1">
+                    <button class="delete-button" type="button" onclick="removeShieldAndChangeColor(this.parentElement)"
+                        style="position: absolute; top: 3px; right: 3px; background-color: transparent; border: none; font-size: 16px; cursor: pointer;">X</button>
                 </div>
                 {% endif %}
                 {% endfor %}
